@@ -1,4 +1,4 @@
-package org.proygrad.app;
+package org.proygrad.einstein.app;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
