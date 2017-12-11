@@ -1,15 +1,23 @@
 package org.proygrad.einstein.api;
 
 
+import java.util.Map;
+
 public class CalculationTO {
+    public enum UnitSystem {
+        INTERNATIONAL_SYSTEM, US_SYSTEM
+    }
 
     private String id;
-    private String name;
     private String type;
-    private String result;
+    private UnitSystem unit;
 
-    public CalculationTO() {
-    }
+    private Map<String, Parameter> parameters;
+    private Map<String, Parameter> materials;
+
+    private Map<String, Double> configurations;
+
+    private Map<String, Object> output;
 
     public String getId() {
         return id;
@@ -17,14 +25,6 @@ public class CalculationTO {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getType() {
@@ -35,11 +35,44 @@ public class CalculationTO {
         this.type = type;
     }
 
-    public String getResult() {
-        return result;
+    public UnitSystem getUnit() {
+        return unit;
     }
 
-    public void setResult(String result) {
-        this.result = result;
+    public void setUnit(UnitSystem unit) {
+        this.unit = unit;
     }
+
+    public Map<String, Parameter> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Map<String, Parameter> parameters) {
+        this.parameters = parameters;
+    }
+
+    public Map<String, Parameter> getMaterials() {
+        return materials;
+    }
+
+    public void setMaterials(Map<String, Parameter> materials) {
+        this.materials = materials;
+    }
+
+    public Map<String, Double> getConfigurations() {
+        return configurations;
+    }
+
+    public void setConfigurations(Map<String, Double> configurations) {
+        this.configurations = configurations;
+    }
+
+    public Map<String, Object> getOutput() {
+        return output;
+    }
+
+    public void setOutput(Map<String, Object> output) {
+        this.output = output;
+    }
+
 }

@@ -84,6 +84,12 @@
             <version>4.3.4.RELEASE</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.6.1</version>
+        </dependency>
+
         <!-- Database EN MEMORIA, QUITAR CUANDO TENGAMOS BASE REAL -->
         <dependency>
             <groupId>org.hsqldb</groupId>

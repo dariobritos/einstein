@@ -10,15 +10,31 @@ import java.util.List;
 @Service
 public class CalculationService {
 
+    protected static final String SE_SURFACE_CRACK_STRAIGHT_PIPE = "SE_SURFACE_CRACK_STRAIGHT_PIPE";
+
     @Autowired
     private CalculationServiceTX calculationServiceTX;
 
+    @Autowired
+    private CalculateSeSurfaceCrackStraightPipe calculateSeSurfaceCrackStraightPipe;
+
+    public List<CalculationTO> getCalculations() {
+        return calculationServiceTX.getCalculations();
+    }
 
     public void addCalculation(CalculationTO calculationTO) {
         calculationServiceTX.addCalculation(calculationTO);
     }
 
-    public List<CalculationTO> getCalculations() {
-        return calculationServiceTX.getCalculations();
+    public void calculationResolve(CalculationTO calculationTO) {
+
+        //TODO: Cargar en hazelcast
+
+        switch (calculationTO.getType()) {
+
+            case SE_SURFACE_CRACK_STRAIGHT_PIPE:
+                CalculationTO output = this.calculateSeSurfaceCrackStraightPipe.calculate(calculationTO);
+                break;
+        }
     }
 }
