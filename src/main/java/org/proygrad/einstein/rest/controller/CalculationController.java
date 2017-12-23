@@ -33,11 +33,11 @@ public class CalculationController {
     }
 
     @RequestMapping(value = "/calculation/resolve", method = RequestMethod.POST)
-    public void calculationResolve(@RequestBody CalculationTO calculationTO) {
+    public CalculationTO calculationResolve(@RequestBody CalculationTO calculationTO) {
 
         calculationTO=generateCalculationMock(calculationTO);
 
-        calculationService.calculationResolve(calculationTO);
+        return calculationService.calculationResolve(calculationTO);
     }
 
     private CalculationTO generateCalculationMock(CalculationTO calculationTO) {
@@ -153,7 +153,7 @@ public class CalculationController {
         calculationTO.setMaterials(materials);
 
         configurations.put("SEED", 123456d);
-        configurations.put("PRECISION", Math.pow(10,6));
+        configurations.put("PRECISION", Math.pow(10,3));
         calculationTO.setConfigurations(configurations);
 
         return calculationTO;

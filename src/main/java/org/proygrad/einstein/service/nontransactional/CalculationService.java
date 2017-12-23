@@ -26,15 +26,17 @@ public class CalculationService {
         calculationServiceTX.addCalculation(calculationTO);
     }
 
-    public void calculationResolve(CalculationTO calculationTO) {
+    public CalculationTO calculationResolve(CalculationTO calculationTO) {
 
         //TODO: Cargar en hazelcast
-
+        CalculationTO output =null;
         switch (calculationTO.getType()) {
 
             case SE_SURFACE_CRACK_STRAIGHT_PIPE:
-                CalculationTO output = this.calculateSeSurfaceCrackStraightPipe.calculate(calculationTO);
+                 output = this.calculateSeSurfaceCrackStraightPipe.calculate(calculationTO);
                 break;
         }
+
+        return output;
     }
 }
