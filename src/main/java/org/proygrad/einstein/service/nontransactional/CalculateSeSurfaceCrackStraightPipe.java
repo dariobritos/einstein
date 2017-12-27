@@ -72,6 +72,9 @@ public class CalculateSeSurfaceCrackStraightPipe {
 
         Double seed = calculationTO.getConfigurations().get(SEED);
 
+        // Entradas OK
+        // calculateTxtSupport.mostrarCalculateOrig1(crackDepth,crackLength, wall_thickness, fractureToughness, inner_radius, yieldStress, operatingPressure);
+
         this.loadDistributionMap(CRACK_DEPTH, crackDepth, seed);
         this.loadDistributionMap(CRACK_LENGTH, crackLength, seed);
         this.loadDistributionMap(WALL_THICKNESS, wall_thickness, seed);
@@ -101,12 +104,12 @@ public class CalculateSeSurfaceCrackStraightPipe {
             //Step 2 - Calculate toughness ratio Kr
             Double Kr = calculateKr(a, c, t, KIC, PRi, SigS);
 
-            mostrarCalculateKr(a, c, t, KIC, PRi, SigS, Kr);
+            calculateTxtSupport.mostrarCalculateKr(a, c, t, KIC, PRi, SigS, Kr);
 
             //Step 3 - Calculate load ratio Lr
             Double Lr = calculateLr(a, c, t, Ri, PRi, P, SigS);
 
-            mostrarCalculateLr(a, c, t, Ri, PRi, P, SigS, Lr);
+            calculateTxtSupport.mostrarCalculateLr(a, c, t, Ri, PRi, P, SigS, Lr);
 
             //Step 4 - Determine the position of (Kr, Lr)
             boolean safePipe = isSafeZone(Kr, Lr, LrMax);
@@ -188,82 +191,21 @@ public class CalculateSeSurfaceCrackStraightPipe {
 
         // f(Lr) = (1-0,14(Lr)^2)*(0,3+0,7exp(-0,65(Lr)^6))
         if (Lr <= LrMax) {
-
             Double Lr2 = Math.pow(Lr, 2);
             Double Lr6 = Math.pow(Lr, 6);
             Double expLr6 = Math.exp(-0.065 * Lr6);
 
-
-            Double p1=(1 - (0.14 * Lr2));
-            Double p2=(0.3 + (0.7 * expLr6));
-            Double p3=p1*p2;
-
-            String line = "";
-            line = line + "Lr2:" + Lr2.toString();
-            line = line + ", Lr6:" + Lr6.toString();
-            line = line + ", expLr6:" + expLr6.toString();
-            line = line + ", p1:" + p1.toString();
-            line = line + ", p2:" + p2.toString();
-            line = line + ", p3:" + p3.toString();
-            line = line + "\n";
-
-            calculateTxtSupport.saveLineTxt("testFileIsSafeZoneIf", line);
-
             fLr = (1 - (0.14 * Lr2)) * (0.3 + (0.7 * expLr6));
-        } else {
-            calculateTxtSupport.saveLineTxt("testFileIsSafeZoneElse", "44444");
+
+            calculateTxtSupport.mostrarCalculateSafeZoneIf(Lr2, Lr6, expLr6, fLr);
         }
 
         gx = fLr - Kr;
 
-
-        mostrarIsSafeZone(gx, fLr, Kr, Lr);
+        calculateTxtSupport.mostrarIsSafeZone(gx, fLr, Kr, Lr);
 
         return gx > 0; // the pipe safe!!!
         // else failure occurs.
-    }
-
-    private void mostrarIsSafeZone(Double gx, Double fLr, Double  Kr, Double Lr ) {
-
-        String line = "";
-        line = line + "gx:" + gx.toString();
-        line = line + ", fLr:" + fLr.toString();
-        line = line + ", Kr:" + Kr.toString();
-        line = line + ", Lr:" + Lr.toString();
-        line = line + "\n";
-
-        calculateTxtSupport.saveLineTxt("testFileIsSafeZone", line);
-    }
-
-    private void mostrarCalculateKr(Double a, Double c, Double t, Double KIC, Double PRi, Double SigS, Double Kr) {
-
-        String line = "";
-        line = line + "a:" + a.toString();
-        line = line + ", c:" + c.toString();
-        line = line + ", t:" + t.toString();
-        line = line + ", KIC:" + KIC.toString();
-        line = line + ", PRi:" + PRi.toString();
-        line = line + ", SigS:" + SigS.toString();
-        line = line + ", Kr:" + Kr.toString();
-        line = line + "\n";
-
-        calculateTxtSupport.saveLineTxt("testFileKr", line);
-    }
-
-    private void mostrarCalculateLr(Double a, Double c, Double t, Double ri, Double pRi, Double p, Double sigS, Double Lr) {
-
-        String line = "";
-        line = line + "a:" + a.toString();
-        line = line + ", c:" + c.toString();
-        line = line + ", t:" + t.toString();
-        line = line + ", ri:" + ri.toString();
-        line = line + ", pRi:" + pRi.toString();
-        line = line + ", p:" + p.toString();
-        line = line + ", sigS:" + sigS.toString();
-        line = line + ", Lr:" + Lr.toString();
-        line = line + "\n";
-
-        calculateTxtSupport.saveLineTxt("testFileLr", line);
     }
 
 
@@ -294,7 +236,13 @@ public class CalculateSeSurfaceCrackStraightPipe {
 
     private Double simulate(String key, Parameter variable) {
         if (Parameter.ValueType.VARIABLE.equals(variable.getType())) {
-            variable.setValue(distributionMap.get(key).sample());
+            //variable.setValue(distributionMap.get(key).sample());
+            Parameter p = new Parameter();
+            p.setUnit(variable.getUnit());
+            p.setType(variable.getType());
+            p.setValue(distributionMap.get(key).sample());
+
+            return loadAndNormalize(p).getValue();
         }
 
         return loadAndNormalize(variable).getValue();
@@ -314,13 +262,14 @@ public class CalculateSeSurfaceCrackStraightPipe {
                 Double shape = variable.getValue();
                 RandomDataGenerator ranL = new RandomDataGenerator();
                 ranL.getRandomGenerator().setSeed(seed.longValue());
-                distributionMap.put(key, new LogNormalDistribution(ranL.getRandomGenerator(), shape, scale));
+                distributionMap.put(key, new LogNormalDistribution(ranL.getRandomGenerator(), scale, shape));
                 break;
             case POISSON:
                 //TODO: VER DE AGREGAR! PARA MAS FUNCIONABILIDAD.
                 break;
         }
     }
+
 
     //TODO: completar segun se necesite!!!
     private Parameter loadAndNormalize(Parameter variable) {

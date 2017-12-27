@@ -41,7 +41,7 @@ public class CalculationController {
     }
 
     private CalculationTO generateCalculationMock(CalculationTO calculationTO) {
-        //TODO: MOCKEAR LA ENTRADA
+
         Map<String, Parameter> parameters = new HashMap<String, Parameter>();
         Map<String, Parameter> materials = new HashMap<String, Parameter>();
         Map<String, Double> configurations = new HashMap<String, Double>();
@@ -91,7 +91,7 @@ public class CalculationController {
 
         Parameter fractureToughness = new Parameter();
         Map<String, Double> fractureToughnessParametersDistribution  = new HashMap<String, Double>();
-        fractureToughnessParametersDistribution.put("SCALE", 32.97d);
+        fractureToughnessParametersDistribution.put("SCALE", 10d);
         Distribution fractureToughnessDistribution = new Distribution();
         fractureToughnessDistribution.setParameters(fractureToughnessParametersDistribution);
         fractureToughnessDistribution.setType(Distribution.DistributionType.LOGNORMAL);
@@ -117,7 +117,7 @@ public class CalculationController {
 
         Parameter yieldStress = new Parameter();
         Map<String, Double> yieldStressParametersDistribution  = new HashMap<String, Double>();
-        yieldStressParametersDistribution.put("SCALE", 24.8d);
+        yieldStressParametersDistribution.put("SCALE", 10d);
         Distribution yieldStressDistribution = new Distribution();
         yieldStressDistribution.setParameters(yieldStressParametersDistribution);
         yieldStressDistribution.setType(Distribution.DistributionType.LOGNORMAL);
@@ -130,7 +130,7 @@ public class CalculationController {
 
         Parameter operatingPressure = new Parameter();
         Map<String, Double> operatingPressureParametersDistribution  = new HashMap<String, Double>();
-        operatingPressureParametersDistribution.put("SCALE", 0.34d);
+        operatingPressureParametersDistribution.put("SCALE", 10d);
         Distribution operatingPressureDistribution = new Distribution();
         operatingPressureDistribution.setParameters(operatingPressureParametersDistribution);
         operatingPressureDistribution.setType(Distribution.DistributionType.LOGNORMAL);
