@@ -4,6 +4,7 @@ import org.apache.commons.math3.distribution.AbstractRealDistribution;
 import org.apache.commons.math3.distribution.LogNormalDistribution;
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.random.RandomDataGenerator;
+import org.apache.commons.math3.random.RandomGenerator;
 import org.proygrad.einstein.api.CalculationTO;
 import org.proygrad.einstein.api.Parameter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,7 @@ public class CalculateSeSurfaceCrackStraightPipe {
 
 
     private Map<String, AbstractRealDistribution> distributionMap = new HashMap<String, AbstractRealDistribution>();
+
     private CalculationTO.UnitSystem unitSystem;
 
     public CalculationTO calculate(CalculationTO calculationTO) {
@@ -72,16 +74,20 @@ public class CalculateSeSurfaceCrackStraightPipe {
 
         Double seed = calculationTO.getConfigurations().get(SEED);
 
-        // Entradas OK
-        // calculateTxtSupport.mostrarCalculateOrig1(crackDepth,crackLength, wall_thickness, fractureToughness, inner_radius, yieldStress, operatingPressure);
+        RandomDataGenerator ran = new RandomDataGenerator();
+        RandomGenerator randomGenerator = ran.getRandomGenerator();
+        randomGenerator.setSeed(seed.longValue());
 
-        this.loadDistributionMap(CRACK_DEPTH, crackDepth, seed);
-        this.loadDistributionMap(CRACK_LENGTH, crackLength, seed);
-        this.loadDistributionMap(WALL_THICKNESS, wall_thickness, seed);
-        this.loadDistributionMap(FRACTURE_TOUGHNESS, fractureToughness, seed);
-        this.loadDistributionMap(INNER_RADIUS, inner_radius, seed);
-        this.loadDistributionMap(YIELD_STRESS, yieldStress, seed);
-        this.loadDistributionMap(OPERATING_PRESSURE, operatingPressure, seed);
+        // Entradas OK
+        //calculateTxtSupport.mostrarCalculateOrig1(crackDepth,crackLength, wall_thickness, fractureToughness, inner_radius, yieldStress, operatingPressure);
+
+        this.loadDistributionMap(CRACK_DEPTH, crackDepth, randomGenerator);
+        this.loadDistributionMap(CRACK_LENGTH, crackLength, randomGenerator);
+        this.loadDistributionMap(WALL_THICKNESS, wall_thickness, randomGenerator);
+        this.loadDistributionMap(FRACTURE_TOUGHNESS, fractureToughness, randomGenerator);
+        this.loadDistributionMap(INNER_RADIUS, inner_radius, randomGenerator);
+        this.loadDistributionMap(YIELD_STRESS, yieldStress, randomGenerator);
+        this.loadDistributionMap(OPERATING_PRESSURE, operatingPressure, randomGenerator);
 
         // N esta relacionado a la precision pedida.
         Double N = calculationTO.getConfigurations().get(PRECISION);
@@ -99,7 +105,10 @@ public class CalculateSeSurfaceCrackStraightPipe {
             Double SigS = this.simulate(YIELD_STRESS, yieldStress);
             Double P = this.simulate(OPERATING_PRESSURE, operatingPressure);
 
-            Double PRi = P * Ri;
+
+                Double PRi = P * Ri;
+
+            calculateTxtSupport.mostrarCalculateOrig(a, c, t, KIC, PRi, SigS, P);
 
             //Step 2 - Calculate toughness ratio Kr
             Double Kr = calculateKr(a, c, t, KIC, PRi, SigS);
@@ -116,8 +125,6 @@ public class CalculateSeSurfaceCrackStraightPipe {
             if (!safePipe) {
                 n++;
             }
-
-
             i++;
         } while (i < N);
 
@@ -248,21 +255,22 @@ public class CalculateSeSurfaceCrackStraightPipe {
         return loadAndNormalize(variable).getValue();
     }
 
-    private void loadDistributionMap(String key, Parameter variable, Double seed) {
+    private void loadDistributionMap(String key, Parameter variable, RandomGenerator randomGenerator) {
+
         switch (variable.getDistribution().getType()) {
             case NORMAL:
                 Double variance = variable.getDistribution().getParameters().get(VARIANCE);
                 Double mean = variable.getValue();
-                RandomDataGenerator ran = new RandomDataGenerator();
-                ran.getRandomGenerator().setSeed(seed.longValue());
-                distributionMap.put(key, new NormalDistribution(ran.getRandomGenerator(), mean, variance));
+                distributionMap.put(key, new NormalDistribution(randomGenerator, mean, variance));
                 break;
             case LOGNORMAL:
-                Double scale = variable.getDistribution().getParameters().get(SCALE);
-                Double shape = variable.getValue();
-                RandomDataGenerator ranL = new RandomDataGenerator();
-                ranL.getRandomGenerator().setSeed(seed.longValue());
-                distributionMap.put(key, new LogNormalDistribution(ranL.getRandomGenerator(), scale, shape));
+                double m = variable.getValue();
+                double v = Math.pow(variable.getDistribution().getParameters().get(SCALE),2);
+
+                double mu = Math.log(Math.pow(m,2)/Math.sqrt(v+Math.pow(m,2)));
+                double sigma = Math.sqrt(Math.log((v/(Math.pow(m,2)) + 1)));
+
+                distributionMap.put(key, new LogNormalDistribution(randomGenerator, mu, sigma));
                 break;
             case POISSON:
                 //TODO: VER DE AGREGAR! PARA MAS FUNCIONABILIDAD.

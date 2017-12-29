@@ -91,7 +91,7 @@ public class CalculationController {
 
         Parameter fractureToughness = new Parameter();
         Map<String, Double> fractureToughnessParametersDistribution  = new HashMap<String, Double>();
-        fractureToughnessParametersDistribution.put("SCALE", 10d);
+        fractureToughnessParametersDistribution.put("SCALE", 32.97d);
         Distribution fractureToughnessDistribution = new Distribution();
         fractureToughnessDistribution.setParameters(fractureToughnessParametersDistribution);
         fractureToughnessDistribution.setType(Distribution.DistributionType.LOGNORMAL);
@@ -117,7 +117,7 @@ public class CalculationController {
 
         Parameter yieldStress = new Parameter();
         Map<String, Double> yieldStressParametersDistribution  = new HashMap<String, Double>();
-        yieldStressParametersDistribution.put("SCALE", 10d);
+        yieldStressParametersDistribution.put("SCALE", 24.8d);
         Distribution yieldStressDistribution = new Distribution();
         yieldStressDistribution.setParameters(yieldStressParametersDistribution);
         yieldStressDistribution.setType(Distribution.DistributionType.LOGNORMAL);
@@ -130,7 +130,7 @@ public class CalculationController {
 
         Parameter operatingPressure = new Parameter();
         Map<String, Double> operatingPressureParametersDistribution  = new HashMap<String, Double>();
-        operatingPressureParametersDistribution.put("SCALE", 10d);
+        operatingPressureParametersDistribution.put("SCALE", 0.34d);
         Distribution operatingPressureDistribution = new Distribution();
         operatingPressureDistribution.setParameters(operatingPressureParametersDistribution);
         operatingPressureDistribution.setType(Distribution.DistributionType.LOGNORMAL);
@@ -143,7 +143,7 @@ public class CalculationController {
         calculationTO.setParameters(parameters);
 
         Parameter plasticCollapse = new Parameter();
-        plasticCollapse.setValue(0.0007d);
+        plasticCollapse.setValue(1d);
         plasticCollapse.setType(Parameter.ValueType.STATIC);
         plasticCollapse.setDistribution(null);
         plasticCollapse.setUnit(Parameter.UnitType.MEGAPASCAL);

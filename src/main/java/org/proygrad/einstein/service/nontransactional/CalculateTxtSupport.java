@@ -42,15 +42,15 @@ public class CalculateTxtSupport {
         saveLineTxt("testFileOrig1", line);
     }
 
-    public void mostrarCalculateOrig(Parameter crackDepth, Parameter crackLength, Parameter wall_thickness, Parameter fractureToughness, Double pRi, Parameter yieldStress, Parameter operatingPressure) {
+    public void mostrarCalculateOrig(Double crackDepth, Double crackLength, Double wall_thickness, Double fractureToughness, Double pRi, Double yieldStress, Double operatingPressure) {
         String line = "";
-        line = line + "crackDepth:" + crackDepth.getValue().toString();
-        line = line + ", crackLength:" + crackLength.getValue().toString();
-        line = line + ", wall_thickness:" + wall_thickness.getValue().toString();
-        line = line + ", fractureToughness:" + fractureToughness.getValue().toString();
+        line = line + "crackDepth:" + crackDepth.toString();
+        line = line + ", crackLength:" + crackLength.toString();
+        line = line + ", wall_thickness:" + wall_thickness.toString();
+        line = line + ", fractureToughness:" + fractureToughness.toString();
         line = line + ", pRi:" + pRi.toString();
-        line = line + ", yieldStress:" + yieldStress.getValue().toString();
-        line = line + ", operatingPressure:" + operatingPressure.getValue().toString();
+        line = line + ", yieldStress:" + yieldStress.toString();
+        line = line + ", operatingPressure:" + operatingPressure.toString();
         line = line + "\n";
 
         saveLineTxt("testFileOrig", line);
