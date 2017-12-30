@@ -100,12 +100,13 @@ public class CalculateTxtSupport {
     }
 
 
-    public void mostrarCalculateSafeZoneIf(Double Lr2, Double Lr6, Double expLr6, Double fLr){
+    public void mostrarCalculateSafeZoneIf(Double Lr, Double Lr2, Double Lr6, Double expLr6, Double fLr){
         Double p1=(1 - (0.14 * Lr2));
         Double p2=(0.3 + (0.7 * expLr6));
         Double p3=p1*p2;
 
         String line = "";
+        line = line + "Lr:" + Lr.toString();
         line = line + "Lr2:" + Lr2.toString();
         line = line + ", Lr6:" + Lr6.toString();
         line = line + ", expLr6:" + expLr6.toString();
