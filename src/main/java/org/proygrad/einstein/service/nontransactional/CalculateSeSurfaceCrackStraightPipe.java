@@ -13,8 +13,8 @@ import java.util.Map;
 @Service
 public class CalculateSeSurfaceCrackStraightPipe {
 
-    @Autowired
-    private CalculateTxtSupport calculateTxtSupport;
+    //@Autowired
+    //private CalculateTxtSupport calculateTxtSupport;
 
     @Autowired
     private ProbabilityDistribution probabilityDistribution;
@@ -95,19 +95,19 @@ public class CalculateSeSurfaceCrackStraightPipe {
             Double P = this.probabilityDistribution.simulate(OPERATING_PRESSURE, operatingPressure, unitSystem);
 
 
-                Double PRi = P * Ri;
+            Double PRi = P * Ri;
 
-            calculateTxtSupport.mostrarCalculateOrig(a, c, t, KIC, PRi, SigS, P);
+            //calculateTxtSupport.mostrarCalculateOrig(a, c, t, KIC, PRi, SigS, P);
 
             //Step 2 - Calculate toughness ratio Kr
             Double Kr = calculateKr(a, c, t, KIC, PRi, SigS);
 
-            calculateTxtSupport.mostrarCalculateKr(a, c, t, KIC, PRi, SigS, Kr);
+            //calculateTxtSupport.mostrarCalculateKr(a, c, t, KIC, PRi, SigS, Kr);
 
             //Step 3 - Calculate load ratio Lr
             Double Lr = calculateLr(a, c, t, Ri, PRi, P, SigS);
 
-            calculateTxtSupport.mostrarCalculateLr(a, c, t, Ri, PRi, P, SigS, Lr);
+            //calculateTxtSupport.mostrarCalculateLr(a, c, t, Ri, PRi, P, SigS, Lr);
 
             //Step 4 - Determine the position of (Kr, Lr)
             boolean safePipe = isSafeZone(Kr, Lr, LrMax);
@@ -145,18 +145,20 @@ public class CalculateSeSurfaceCrackStraightPipe {
 
         Double SigM = PRi / t;
 
-        Double fm0 = (1 / Math.pow(1 + 1.464 * (Math.pow((adivc), (1.65))), 0.5));
-        Double fm1 = (1.13 + 0.09 * adivc);
+        Double fm0 = (1 / Math.pow(1 + (1.464 * (Math.pow((adivc), (1.65)))), 0.5));
+        Double fm1 = (1.13 - (0.09 * adivc));
         Double fm2 = (-0.45 + (0.89 / (0.2 + adivc))) * powAdivt2;
-        Double fm3 = (0.5 - (1 / (0.65 + adivc)) + 14 * Math.pow((1 - adivc), 24)) * Math.pow(adivt, 4);
+        Double fm3 = (0.5 - (1 / (0.65 + adivc)) + (14 * Math.pow((1 - adivc), 24))) * Math.pow(adivt, 4);
         Double fm = fm0 * (fm1 + fm2 + fm3);
 
-        Double fb0 = 1D;
+        Double fb0 = 1d;
         Double fb1 = (-1.22 - (0.12 * adivc)) * adivt;
-        Double fb2 = (0.55 - (1.05 * (Math.pow(adivc, 0.75))) + (0.47 * (Math.pow(adivc, 15)))) * powAdivt2;
+        Double fb2 = (0.55 - (1.05 * (Math.pow(adivc, 0.75))) + (0.47 * (Math.pow(adivc, 1.5)))) * powAdivt2;
         Double fb = (fb0 + fb1 + fb2) * fm;
 
-        Double KI = Math.sqrt(Math.PI * a) * (SigM * fm + SigS * fb);
+        Double KI = Math.sqrt(Math.PI * a * ((SigM * fm) + (SigS * fb)));
+
+        //calculateTxtSupport.mostrarCalculateKrDentro(adivc, adivt, powAdivt2, SigM, fm0,fm1,fm2,fm3,fm, fb1,fb2,fb, KI);
 
         return KI / KIC;
     }
@@ -180,25 +182,25 @@ public class CalculateSeSurfaceCrackStraightPipe {
     private boolean isSafeZone(Double Kr, Double Lr, Double LrMax) {
 
         // g(X)= f(Lr)-Kr
-        Double gx;
+        Double gx = 0d;
 
         // f(Lr) = 0, si Lr > Lr max
         Double fLr = 0d;
 
-        // f(Lr) = (1-0,14(Lr)^2)*(0,3+0,7exp(-0,65(Lr)^6))
         if (Lr <= LrMax) {
             Double Lr2 = Math.pow(Lr, 2);
             Double Lr6 = Math.pow(Lr, 6);
-            Double expLr6 = Math.exp(-0.065 * Lr6);
+            Double partLr6 = -0.065 * Lr6;
+            Double expLr6 = Math.exp(partLr6);
+
 
             fLr = (1 - (0.14 * Lr2)) * (0.3 + (0.7 * expLr6));
 
-            calculateTxtSupport.mostrarCalculateSafeZoneIf(Lr, Lr2, Lr6, expLr6, fLr);
+           // calculateTxtSupport.mostrarCalculateSafeZoneIf(Lr, Lr2, Lr6, expLr6, fLr);
         }
 
         gx = fLr - Kr;
-
-        calculateTxtSupport.mostrarIsSafeZone(gx, fLr, Kr, Lr);
+       // calculateTxtSupport.mostrarIsSafeZone(gx, fLr, Kr, Lr);
 
         return gx > 0; // the pipe safe!!!
         // else failure occurs.

@@ -143,7 +143,7 @@ public class CalculationController {
         calculationTO.setParameters(parameters);
 
         Parameter plasticCollapse = new Parameter();
-        plasticCollapse.setValue(1d);
+        plasticCollapse.setValue(2d);
         plasticCollapse.setType(Parameter.ValueType.STATIC);
         plasticCollapse.setDistribution(null);
         plasticCollapse.setUnit(Parameter.UnitType.MEGAPASCAL);
@@ -153,7 +153,7 @@ public class CalculationController {
         calculationTO.setMaterials(materials);
 
         configurations.put("SEED", 123456d);
-        configurations.put("PRECISION", Math.pow(10,3));
+        configurations.put("PRECISION", Math.pow(10,6));
         calculationTO.setConfigurations(configurations);
 
         return calculationTO;

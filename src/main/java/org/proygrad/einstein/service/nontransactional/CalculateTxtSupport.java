@@ -120,5 +120,24 @@ public class CalculateTxtSupport {
     }
 
 
+    public void mostrarCalculateKrDentro(Double adivc, Double adivt, Double powAdivt2, Double sigM, Double fm0, Double fm1, Double fm2, Double fm3, Double fm, Double fb1, Double fb2, Double fb, Double ki) {
 
+        String line = "";
+        line = line + "adivc:" + adivc.toString();
+        line = line + " adivt:" + adivt.toString();
+        line = line + ", powAdivt2:" + powAdivt2.toString();
+        line = line + ", sigM:" + sigM.toString();
+        line = line + ", fm0:" + fm0.toString();
+        line = line + ", fm1:" + fm1.toString();
+        line = line + ", fm2:" + fm2.toString();
+        line = line + ", fm3:" + fm3.toString();
+        line = line + ", fm:" + fm.toString();
+        line = line + ", fb1:" + fb1.toString();
+        line = line + ", fb2:" + fb2.toString();
+        line = line + ", fb:" + fb.toString();
+        line = line + ", ki:" + ki.toString();
+        line = line + "\n";
+
+        saveLineTxt("testFileKrDentro", line);
+    }
 }
