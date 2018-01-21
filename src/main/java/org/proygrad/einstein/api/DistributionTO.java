@@ -2,21 +2,18 @@ package org.proygrad.einstein.api;
 
 import java.util.Map;
 
-public class Distribution {
+public class DistributionTO {
 
 
-    public enum DistributionType {
-        NORMAL, POISSON, LOGNORMAL
-    }
 
-    private DistributionType type;
+    private String  type;
     private Map<String, Double> parameters;
 
-    public DistributionType getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(DistributionType type) {
+    public void setType(String type) {
         this.type = type;
     }
 

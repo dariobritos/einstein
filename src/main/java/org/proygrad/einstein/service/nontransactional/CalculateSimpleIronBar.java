@@ -3,10 +3,13 @@ package org.proygrad.einstein.service.nontransactional;
 import org.apache.commons.math3.distribution.AbstractRealDistribution;
 import org.apache.commons.math3.distribution.LogNormalDistribution;
 import org.apache.commons.math3.distribution.NormalDistribution;
-import org.apache.commons.math3.random.RandomDataGenerator;
 import org.apache.commons.math3.random.RandomGenerator;
-import org.proygrad.einstein.api.CalculationTO;
-import org.proygrad.einstein.api.Parameter;
+import org.proygrad.einstein.api.ParameterTO;
+import org.proygrad.einstein.persistence.entities.ScenarioEntity;
+import org.proygrad.einstein.util.DistributionType;
+import org.proygrad.einstein.util.UnitSystem;
+import org.proygrad.einstein.util.UnitType;
+import org.proygrad.einstein.util.ValueType;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -29,22 +32,22 @@ public class CalculateSimpleIronBar {
 
 
     private Map<String, AbstractRealDistribution> distributionMap = new HashMap<String, AbstractRealDistribution>();
-    private CalculationTO.UnitSystem unitSystem;
+    private String unitSystem;
 
-    public CalculationTO calculate(CalculationTO calculationTO) {
+    public ScenarioEntity calculate(ScenarioEntity scenario) {
 
-        calculationTO = calculateSimple(calculationTO);
+        scenario = calculateSimple(scenario);
 
-        return calculationTO;
+        return scenario;
     }
 
-    public CalculationTO calculateSimple(CalculationTO calculationTO) {
+    public ScenarioEntity calculateSimple(ScenarioEntity scenario) {
 
-        unitSystem = calculationTO.getUnit();
-        Parameter barLoadParameter = calculationTO.getParameters().get(BAR_LOAD);
-        Parameter barStrengthParameter = calculationTO.getParameters().get(BAR_STRENGTH);
+       /* unitSystem = scenario.getUnit();
+        ParameterTO barLoadParameterTO = scenario.getParameters().get(BAR_LOAD);
+        ParameterTO barStrengthParameterTO = scenario.getParameters().get(BAR_STRENGTH);
 
-        Double seed = calculationTO.getConfigurations().get(SEED);
+        Double seed = scenario.getConfigurations().get(SEED);
 
 
         RandomDataGenerator ran = new RandomDataGenerator();
@@ -52,17 +55,17 @@ public class CalculateSimpleIronBar {
         randomGenerator.setSeed(seed.longValue());
 
 
-        this.loadDistributionMap(BAR_LOAD, barLoadParameter, randomGenerator);
-        this.loadDistributionMap(BAR_STRENGTH, barStrengthParameter, randomGenerator);
+        this.loadDistributionMap(BAR_LOAD, barLoadParameterTO, randomGenerator);
+        this.loadDistributionMap(BAR_STRENGTH, barStrengthParameterTO, randomGenerator);
 
 
-        Double precision = calculationTO.getConfigurations().get(PRECISION);
+        Double precision = scenario.getConfigurations().get(PRECISION);
         Integer failCount = 0;
 
         for (double i = 0; i < precision; i++) {
 
-            Double barLoadSim = simulate(BAR_LOAD, barLoadParameter);
-            Double barStrengthSim = simulate(BAR_STRENGTH, barStrengthParameter);
+            Double barLoadSim = simulate(BAR_LOAD, barLoadParameterTO);
+            Double barStrengthSim = simulate(BAR_STRENGTH, barStrengthParameterTO);
 
             if (barLoadSim > barStrengthSim) {
                 failCount++;
@@ -73,20 +76,21 @@ public class CalculateSimpleIronBar {
         Double prob = failCount / precision;
 
 
-        if (calculationTO.getOutput() == null) {
+        if (scenario.getOutput() == null) {
             Map<String, Object> output = new HashMap<String, Object>();
-            calculationTO.setOutput(output);
+            scenario.setOutput(output);
         }
-        calculationTO.getOutput().put(FAILURE_PROBABILITY, prob);
+        scenario.getOutput().put(FAILURE_PROBABILITY, prob);
 
 
-        return calculationTO;
+        return scenario;*/
+       return null;
     }
 
-    private Double simulate(String key, Parameter variable) {
-        if (Parameter.ValueType.VARIABLE.equals(variable.getType())) {
+    private Double simulate(String key, ParameterTO variable) {
+        if (ValueType.VARIABLE.equals(variable.getType())) {
             //variable.setValue(distributionMap.get(key).sample());
-            Parameter p = new Parameter();
+            ParameterTO p = new ParameterTO();
             p.setUnit(variable.getUnit());
             p.setType(variable.getType());
             p.setValue(distributionMap.get(key).sample());
@@ -97,19 +101,19 @@ public class CalculateSimpleIronBar {
         return loadAndNormalize(variable).getValue();
     }
 
-    private void loadDistributionMap(String key, Parameter variable, RandomGenerator randomGenerator) {
-        switch (variable.getDistribution().getType()) {
-            case NORMAL:
-                Double variance = variable.getDistribution().getParameters().get(VARIANCE);
+    private void loadDistributionMap(String key, ParameterTO variable, RandomGenerator randomGenerator) {
+        switch (variable.getDistributionTO().getType()) {
+            case DistributionType.NORMAL:
+                Double variance = variable.getDistributionTO().getParameters().get(VARIANCE);
                 Double mean = variable.getValue();
                 distributionMap.put(key, new NormalDistribution(randomGenerator, mean, variance));
                 break;
-            case LOGNORMAL:
-                Double scale = variable.getDistribution().getParameters().get(SCALE);
+            case DistributionType.LOGNORMAL:
+                Double scale = variable.getDistributionTO().getParameters().get(SCALE);
                 Double shape = variable.getValue();
                 distributionMap.put(key, new LogNormalDistribution(randomGenerator, scale, shape));
                 break;
-            case POISSON:
+            case DistributionType.POISSON:
                 //TODO: VER DE AGREGAR! PARA MAS FUNCIONABILIDAD.
                 break;
         }
@@ -117,33 +121,33 @@ public class CalculateSimpleIronBar {
 
 
     //TODO: completar segun se necesite!!!
-    private Parameter loadAndNormalize(Parameter variable) {
+    private ParameterTO loadAndNormalize(ParameterTO variable) {
         switch (unitSystem) {
-            case INTERNATIONAL_SYSTEM:
+            case UnitSystem.INTERNATIONAL_SYSTEM :
                 switch (variable.getUnit()) {
-                    case CENTIMETRE:
+                    case UnitType.CENTIMETRE:
                         variable.setValue(variable.getValue() / 10);
-                        variable.setUnit(Parameter.UnitType.MILLIMETRE);
+                        variable.setUnit(UnitType.MILLIMETRE);
                         break;
-                    case KILOPASCAL:
+                    case UnitType.KILOPASCAL:
                         variable.setValue(variable.getValue() * 1000);
-                        variable.setUnit(Parameter.UnitType.MEGAPASCAL);
+                        variable.setUnit(UnitType.MEGAPASCAL);
                         break;
                 }
                 break;
-            case US_SYSTEM:
+            case UnitSystem.US_SYSTEM:
                 switch (variable.getUnit()) {
-                    case THOU:
+                    case UnitType.THOU:
                         variable.setValue(variable.getValue() * 0.0254);
-                        variable.setUnit(Parameter.UnitType.MILLIMETRE);
+                        variable.setUnit(UnitType.MILLIMETRE);
                         break;
-                    case INCH:
+                    case UnitType.INCH:
                         variable.setValue(variable.getValue() * 25.4);
-                        variable.setUnit(Parameter.UnitType.MILLIMETRE);
+                        variable.setUnit(UnitType.MILLIMETRE);
                         break;
-                    case FOOT:
+                    case UnitType.FOOT:
                         variable.setValue(variable.getValue() * 304.8);
-                        variable.setUnit(Parameter.UnitType.MILLIMETRE);
+                        variable.setUnit(UnitType.MILLIMETRE);
                         break;
                 }
                 break;

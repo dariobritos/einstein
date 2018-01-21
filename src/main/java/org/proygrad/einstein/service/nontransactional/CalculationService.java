@@ -1,11 +1,12 @@
 package org.proygrad.einstein.service.nontransactional;
 
-import org.proygrad.einstein.api.CalculationTO;
+import org.proygrad.einstein.api.ScenarioTO;
+import org.proygrad.einstein.persistence.entities.ScenarioEntity;
 import org.proygrad.einstein.service.transactional.CalculationServiceTX;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.UUID;
 
 @Service
 public class CalculationService {
@@ -16,38 +17,40 @@ public class CalculationService {
     @Autowired
     private CalculationServiceTX calculationServiceTX;
 
-
-
     @Autowired
     private CalculateSimpleIronBar calculateSimpleIronBar;
-
-
 
     @Autowired
     private CalculateSeSurfaceCrackStraightPipe calculateSeSurfaceCrackStraightPipe;
 
-    public List<CalculationTO> getCalculations() {
-        return calculationServiceTX.getCalculations();
+
+    public UUID calculationRequest(ScenarioTO scenarioTO) {
+        //TODO: Recepcionar el pedido de calulo, guardarlo y devolver el Id del pedido.
+
+        UUID requestCalculation = UUID.randomUUID();
+
+        scenarioTO.setRequestCalculation(requestCalculation);
+        calculationServiceTX.addCalculation(scenarioTO);
+
+        return requestCalculation;
     }
 
-    public void addCalculation(CalculationTO calculationTO) {
-        calculationServiceTX.addCalculation(calculationTO);
-    }
 
-    public CalculationTO calculationResolve(CalculationTO calculationTO) {
+    public void calculationResolve(ScenarioEntity scenario) {
 
-        //TODO: Cargar en hazelcast
-        CalculationTO output =null;
-        switch (calculationTO.getType()) {
+        ScenarioEntity resolve;
+
+        switch (scenario.getType()) {
 
             case SE_SURFACE_CRACK_STRAIGHT_PIPE:
-                output = this.calculateSeSurfaceCrackStraightPipe.calculate(calculationTO);
+                resolve = this.calculateSeSurfaceCrackStraightPipe.calculate(scenario);
                 break;
             case SIMPLE_IRON_BAR:
-                output = this.calculateSimpleIronBar.calculate(calculationTO);
+                resolve = this.calculateSimpleIronBar.calculate(scenario);
                 break;
         }
 
-        return output;
+        // resolve
     }
+
 }

@@ -1,14 +1,11 @@
 package org.proygrad.einstein.service.nontransactional;
 
-import org.apache.commons.math3.random.RandomDataGenerator;
-import org.apache.commons.math3.random.RandomGenerator;
-import org.proygrad.einstein.api.CalculationTO;
-import org.proygrad.einstein.api.Parameter;
+import org.proygrad.einstein.api.ParameterTO;
+import org.proygrad.einstein.persistence.entities.ScenarioEntity;
+import org.proygrad.einstein.util.UnitSystem;
+import org.proygrad.einstein.util.UnitType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Service
 public class CalculateSeSurfaceCrackStraightPipe {
@@ -36,7 +33,7 @@ public class CalculateSeSurfaceCrackStraightPipe {
     private static final String FAILURE_PROBABILITY = "FAILURE_PROBABILITY";
 
 
-    public CalculationTO calculate(CalculationTO calculationTO) {
+    public ScenarioEntity calculate(ScenarioEntity scenario) {
 
         //TODO: Asignar ejecutores, ver hilos, memoria compartida etc.
         //TODO: Mandar a ejecutar.
@@ -44,27 +41,27 @@ public class CalculateSeSurfaceCrackStraightPipe {
         //TODO: Acumular resultados parciales.
         //TODO: Armar retorno.
 
-        calculationTO = calculateSimple(calculationTO);
+        scenario = calculateSimple(scenario);
 
-        return calculationTO;
+        return scenario ;
     }
 
-    public CalculationTO calculateSimple(CalculationTO calculationTO) {
-
-        CalculationTO.UnitSystem unitSystem = calculationTO.getUnit();
+    public ScenarioEntity calculateSimple(ScenarioEntity scenario) {
+/*
+        String unitSystem = scenario.getUnit();
         //Obtener variables de entrada
-        Parameter crackDepth = calculationTO.getParameters().get(CRACK_DEPTH); // a
-        Parameter crackLength = calculationTO.getParameters().get(CRACK_LENGTH); // c
-        Parameter wall_thickness = calculationTO.getParameters().get(WALL_THICKNESS); // t
-        Parameter fractureToughness = calculationTO.getParameters().get(FRACTURE_TOUGHNESS); // KIC
-        Parameter inner_radius = calculationTO.getParameters().get(INNER_RADIUS); // Ri
-        Parameter yieldStress = calculationTO.getParameters().get(YIELD_STRESS); // SigS
-        Parameter operatingPressure = calculationTO.getParameters().get(OPERATING_PRESSURE); // P
+        ParameterTO crackDepth = scenario.getParameters().get(CRACK_DEPTH); // a
+        ParameterTO crackLength = scenario.getParameters().get(CRACK_LENGTH); // c
+        ParameterTO wall_thickness = scenario.getParameters().get(WALL_THICKNESS); // t
+        ParameterTO fractureToughness = scenario.getParameters().get(FRACTURE_TOUGHNESS); // KIC
+        ParameterTO inner_radius = scenario.getParameters().get(INNER_RADIUS); // Ri
+        ParameterTO yieldStress = scenario.getParameters().get(YIELD_STRESS); // SigS
+        ParameterTO operatingPressure = scenario.getParameters().get(OPERATING_PRESSURE); // P
 
-        Parameter plasticCollapse = calculationTO.getMaterials().get(PLASTIC_COLLAPSE); // LrMax
+        ParameterTO plasticCollapse = scenario.getMaterials().get(PLASTIC_COLLAPSE); // LrMax
         Double LrMax = plasticCollapse.getValue();  // Plastic Collapse
 
-        Double seed = calculationTO.getConfigurations().get(SEED);
+        Double seed = scenario.getConfigurations().get(SEED);
 
         RandomDataGenerator ran = new RandomDataGenerator();
         RandomGenerator randomGenerator = ran.getRandomGenerator();
@@ -79,20 +76,19 @@ public class CalculateSeSurfaceCrackStraightPipe {
         this.probabilityDistribution.loadDistributionMap(OPERATING_PRESSURE, operatingPressure, randomGenerator);
 
         // N esta relacionado a la precision pedida.
-        Double N = calculationTO.getConfigurations().get(PRECISION);
+        Double N = scenario.getConfigurations().get(PRECISION);
         Double n = 0d; // failure occur
         Double i = 0d; // iteration
 
-
         do {
             //Step 1 - Random variables
-            Double a = this.probabilityDistribution.simulate(CRACK_DEPTH, crackDepth, unitSystem);
-            Double c = this.probabilityDistribution.simulate(CRACK_LENGTH, crackLength, unitSystem);
-            Double t = this.probabilityDistribution.simulate(WALL_THICKNESS, wall_thickness, unitSystem);
-            Double KIC = this.probabilityDistribution.simulate(FRACTURE_TOUGHNESS, fractureToughness, unitSystem);
-            Double Ri = this.probabilityDistribution.simulate(INNER_RADIUS, inner_radius, unitSystem);
-            Double SigS = this.probabilityDistribution.simulate(YIELD_STRESS, yieldStress, unitSystem);
-            Double P = this.probabilityDistribution.simulate(OPERATING_PRESSURE, operatingPressure, unitSystem);
+            Double a = loadAndNormalize(this.probabilityDistribution.simulate(CRACK_DEPTH, crackDepth), unitSystem);
+            Double c = loadAndNormalize(this.probabilityDistribution.simulate(CRACK_LENGTH, crackLength), unitSystem);
+            Double t = loadAndNormalize(this.probabilityDistribution.simulate(WALL_THICKNESS, wall_thickness), unitSystem);
+            Double KIC = loadAndNormalize(this.probabilityDistribution.simulate(FRACTURE_TOUGHNESS, fractureToughness), unitSystem);
+            Double Ri = loadAndNormalize(this.probabilityDistribution.simulate(INNER_RADIUS, inner_radius), unitSystem);
+            Double SigS = loadAndNormalize(this.probabilityDistribution.simulate(YIELD_STRESS, yieldStress), unitSystem);
+            Double P = loadAndNormalize(this.probabilityDistribution.simulate(OPERATING_PRESSURE, operatingPressure), unitSystem);
 
 
             Double PRi = P * Ri;
@@ -120,17 +116,19 @@ public class CalculateSeSurfaceCrackStraightPipe {
         //Step 5 - Determine the failure probability
         //1/N por Sumatoria de hj de 1 a N
 
-        if (calculationTO.getOutput() == null) {
+        if (scenario.getOutput() == null) {
             Map<String, Object> output = new HashMap<String, Object>();
-            calculationTO.setOutput(output);
+            scenario.setOutput(output);
         }
-        calculationTO.getOutput().put(FAILURE_PROBABILITY, n / N);
-        calculationTO.getOutput().put("n", n);
-        calculationTO.getOutput().put("N", N);
-        calculationTO.getOutput().put("LrMax", LrMax);
-        calculationTO.getOutput().put("i", i);
+        scenario.getOutput().put(FAILURE_PROBABILITY, n / N);
+        scenario.getOutput().put("n", n);
+        scenario.getOutput().put("N", N);
+        scenario.getOutput().put("LrMax", LrMax);
+        scenario.getOutput().put("i", i);
 
-        return calculationTO;
+        return scenario;*/
+
+return null;
     }
 
     private Double calculateKr(Double a, Double c, Double t, Double KIC, Double PRi, Double SigS) {
@@ -206,4 +204,41 @@ public class CalculateSeSurfaceCrackStraightPipe {
         // else failure occurs.
     }
 
+
+    //TODO: completar segun se necesite!!!
+    //TODO: luego de sacar a la clase concreta me da la interrogante de agregar algo mas por q lo normalizado para un calculo no es lo mismo para otro.
+    // en este serian milimetros y megapascales.
+    private Double loadAndNormalize(ParameterTO variable, String unitSystem) {
+        switch (unitSystem) {
+            case UnitSystem.INTERNATIONAL_SYSTEM:
+                switch (variable.getUnit()) {
+                    case UnitType.CENTIMETRE:
+                        variable.setValue(variable.getValue() / 10);
+                        variable.setUnit(UnitType.MILLIMETRE);
+                        break;
+                    case UnitType.KILOPASCAL:
+                        variable.setValue(variable.getValue() * 1000);
+                        variable.setUnit(UnitType.MEGAPASCAL);
+                        break;
+                }
+                break;
+            case UnitSystem.US_SYSTEM:
+                switch (variable.getUnit()) {
+                    case UnitType.THOU:
+                        variable.setValue(variable.getValue() * 0.0254);
+                        variable.setUnit(UnitType.MILLIMETRE);
+                        break;
+                    case UnitType.INCH:
+                        variable.setValue(variable.getValue() * 25.4);
+                        variable.setUnit(UnitType.MILLIMETRE);
+                        break;
+                    case UnitType.FOOT:
+                        variable.setValue(variable.getValue() * 304.8);
+                        variable.setUnit(UnitType.MILLIMETRE);
+                        break;
+                }
+                break;
+        }
+        return variable.getValue();
+    }
 }

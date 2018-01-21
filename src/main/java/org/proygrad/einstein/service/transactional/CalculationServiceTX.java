@@ -1,9 +1,9 @@
 package org.proygrad.einstein.service.transactional;
 
 
-import org.proygrad.einstein.api.CalculationTO;
-import org.proygrad.einstein.persistence.dao.CalculationDAO;
-import org.proygrad.einstein.persistence.entities.CalculationEntity;
+import org.proygrad.einstein.api.ScenarioTO;
+import org.proygrad.einstein.persistence.dao.ScenarioDAO;
+import org.proygrad.einstein.persistence.entities.ScenarioEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,25 +14,20 @@ import java.util.stream.Collectors;
 public class CalculationServiceTX {
 
     @Autowired
-    private CalculationDAO calculationDAO;
+    private ScenarioDAO scenarioDAO;
 
-    public void addCalculation(CalculationTO calculationTO) {
+    @Autowired
+    private ScenarioMapper scenarioMapper;
 
-
-        CalculationEntity entity = new CalculationEntity();
-
-
-        calculationDAO.save(entity);
-
-
+    public void addCalculation(ScenarioTO scenarioTO) {
+        ScenarioEntity entity = scenarioMapper.toEntity(scenarioTO);
+        scenarioDAO.save(entity);
     }
 
-    public List<CalculationTO> getCalculations() {
+    public List<ScenarioTO> getCalculations() {
 
-        return calculationDAO.readAll().stream().map(x->{
-            CalculationTO to = new CalculationTO();
-            to.setId(x.getId().toString());
-            return to;
+        return scenarioDAO.readAll().stream().map(x->{
+            return scenarioMapper.toTransferObject(x);
         }).collect(Collectors.toList());
     }
 }

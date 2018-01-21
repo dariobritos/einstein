@@ -1,6 +1,6 @@
 package org.proygrad.einstein.service.nontransactional;
 
-import org.proygrad.einstein.api.Parameter;
+import org.proygrad.einstein.api.ParameterTO;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedWriter;
@@ -28,7 +28,7 @@ public class CalculateTxtSupport {
 
     }
 
-    public void mostrarCalculateOrig1(Parameter crackDepth, Parameter crackLength, Parameter wall_thickness, Parameter fractureToughness, Parameter inner_radius, Parameter yieldStress, Parameter operatingPressure) {
+    public void mostrarCalculateOrig1(ParameterTO crackDepth, ParameterTO crackLength, ParameterTO wall_thickness, ParameterTO fractureToughness, ParameterTO inner_radius, ParameterTO yieldStress, ParameterTO operatingPressure) {
         String line = "";
         line = line + "crackDepth:" + crackDepth.getValue().toString();
         line = line + ", crackLength:" + crackLength.getValue().toString();

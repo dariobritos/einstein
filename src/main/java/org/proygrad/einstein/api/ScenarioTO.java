@@ -2,28 +2,28 @@ package org.proygrad.einstein.api;
 
 
 import java.util.Map;
+import java.util.UUID;
 
-public class CalculationTO {
-    public enum UnitSystem {
-        INTERNATIONAL_SYSTEM, US_SYSTEM
-    }
+public class ScenarioTO {
 
-    private String id;
+    private UUID requestCalculation;
+
+    private UUID id;
     private String type;
-    private UnitSystem unit;
+    private String unit;
 
-    private Map<String, Parameter> parameters;
-    private Map<String, Parameter> materials;
+    private Map<String, ParameterTO> parameters;
+    private Map<String, ParameterTO> materials;
 
     private Map<String, Double> configurations;
 
     private Map<String, Object> output;
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
@@ -35,27 +35,27 @@ public class CalculationTO {
         this.type = type;
     }
 
-    public UnitSystem getUnit() {
+    public String getUnit() {
         return unit;
     }
 
-    public void setUnit(UnitSystem unit) {
+    public void setUnit(String unit) {
         this.unit = unit;
     }
 
-    public Map<String, Parameter> getParameters() {
+    public Map<String, ParameterTO> getParameters() {
         return parameters;
     }
 
-    public void setParameters(Map<String, Parameter> parameters) {
+    public void setParameters(Map<String, ParameterTO> parameters) {
         this.parameters = parameters;
     }
 
-    public Map<String, Parameter> getMaterials() {
+    public Map<String, ParameterTO> getMaterials() {
         return materials;
     }
 
-    public void setMaterials(Map<String, Parameter> materials) {
+    public void setMaterials(Map<String, ParameterTO> materials) {
         this.materials = materials;
     }
 
@@ -73,6 +73,14 @@ public class CalculationTO {
 
     public void setOutput(Map<String, Object> output) {
         this.output = output;
+    }
+
+    public UUID getRequestCalculation() {
+        return requestCalculation;
+    }
+
+    public void setRequestCalculation(UUID requestCalculation) {
+        this.requestCalculation = requestCalculation;
     }
 
 }

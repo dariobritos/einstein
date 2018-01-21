@@ -117,7 +117,6 @@
             <artifactId>spring-cloud-config-client</artifactId>
         </dependency>
 
-
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
@@ -136,11 +135,10 @@
             <version>3.6.1</version>
         </dependency>
 
-        <!-- Database EN MEMORIA, QUITAR CUANDO TENGAMOS BASE REAL -->
         <dependency>
-            <groupId>org.hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <version>2.2.8</version>
+            <groupId>org.mariadb.jdbc</groupId>
+            <artifactId>mariadb-java-client</artifactId>
         </dependency>
+
     </dependencies>
 </project>
