@@ -5,7 +5,7 @@ import org.apache.commons.math3.distribution.LogNormalDistribution;
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.proygrad.einstein.api.ParameterTO;
-import org.proygrad.einstein.persistence.entities.ScenarioEntity;
+import org.proygrad.einstein.api.ScenarioTO;
 import org.proygrad.einstein.util.DistributionType;
 import org.proygrad.einstein.util.UnitSystem;
 import org.proygrad.einstein.util.UnitType;
@@ -34,14 +34,14 @@ public class CalculateSimpleIronBar {
     private Map<String, AbstractRealDistribution> distributionMap = new HashMap<String, AbstractRealDistribution>();
     private String unitSystem;
 
-    public ScenarioEntity calculate(ScenarioEntity scenario) {
+    public ScenarioTO calculate(ScenarioTO scenario) {
 
         scenario = calculateSimple(scenario);
 
         return scenario;
     }
 
-    public ScenarioEntity calculateSimple(ScenarioEntity scenario) {
+    public ScenarioTO calculateSimple(ScenarioTO scenario) {
 
        /* unitSystem = scenario.getUnit();
         ParameterTO barLoadParameterTO = scenario.getParameters().get(BAR_LOAD);

@@ -1,7 +1,6 @@
 package org.proygrad.einstein.service.nontransactional;
 
 import org.proygrad.einstein.api.ScenarioTO;
-import org.proygrad.einstein.persistence.entities.ScenarioEntity;
 import org.proygrad.einstein.service.transactional.CalculationServiceTX;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,16 +25,10 @@ public class CalculationService {
 
     public UUID calculationRequest(ScenarioTO scenarioTO) {
         //TODO: Recepcionar el pedido de calulo, guardarlo y devolver el Id del pedido.
-
-        UUID requestCalculation = UUID.randomUUID();
-
-        scenarioTO.setRequestCalculation(requestCalculation);
-        calculationServiceTX.addCalculation(scenarioTO);
-
-        return requestCalculation;
+        return calculationServiceTX.addCalculation(scenarioTO);
     }
 
-
+/*
     public void calculationResolve(ScenarioEntity scenario) {
 
         ScenarioEntity resolve;
@@ -51,6 +44,6 @@ public class CalculationService {
         }
 
         // resolve
-    }
+    }*/
 
 }

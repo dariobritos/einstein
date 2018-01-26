@@ -1,7 +1,7 @@
 package org.proygrad.einstein.service.nontransactional;
 
 import org.proygrad.einstein.api.ParameterTO;
-import org.proygrad.einstein.persistence.entities.ScenarioEntity;
+import org.proygrad.einstein.api.ScenarioTO;
 import org.proygrad.einstein.util.UnitSystem;
 import org.proygrad.einstein.util.UnitType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +33,7 @@ public class CalculateSeSurfaceCrackStraightPipe {
     private static final String FAILURE_PROBABILITY = "FAILURE_PROBABILITY";
 
 
-    public ScenarioEntity calculate(ScenarioEntity scenario) {
+    public ScenarioTO calculate(ScenarioTO scenario) {
 
         //TODO: Asignar ejecutores, ver hilos, memoria compartida etc.
         //TODO: Mandar a ejecutar.
@@ -46,7 +46,7 @@ public class CalculateSeSurfaceCrackStraightPipe {
         return scenario ;
     }
 
-    public ScenarioEntity calculateSimple(ScenarioEntity scenario) {
+    public ScenarioTO calculateSimple(ScenarioTO scenario) {
 /*
         String unitSystem = scenario.getUnit();
         //Obtener variables de entrada
