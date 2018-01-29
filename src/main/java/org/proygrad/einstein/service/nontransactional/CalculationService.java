@@ -5,8 +5,6 @@ import org.proygrad.einstein.service.transactional.CalculationServiceTX;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 @Service
 public class CalculationService {
 
@@ -23,15 +21,9 @@ public class CalculationService {
     private CalculateSeSurfaceCrackStraightPipe calculateSeSurfaceCrackStraightPipe;
 
 
-    public UUID calculationRequest(ScenarioTO scenarioTO) {
-        //TODO: Recepcionar el pedido de calulo, guardarlo y devolver el Id del pedido.
-        return calculationServiceTX.addCalculation(scenarioTO);
-    }
+    public ScenarioTO calculationResolve(ScenarioTO scenario) {
 
-/*
-    public void calculationResolve(ScenarioEntity scenario) {
-
-        ScenarioEntity resolve;
+        ScenarioTO resolve = null;
 
         switch (scenario.getType()) {
 
@@ -43,7 +35,7 @@ public class CalculationService {
                 break;
         }
 
-        // resolve
-    }*/
+        return resolve;
+    }
 
 }

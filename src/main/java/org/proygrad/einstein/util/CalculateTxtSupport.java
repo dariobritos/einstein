@@ -1,4 +1,4 @@
-package org.proygrad.einstein.service.nontransactional;
+package org.proygrad.einstein.util;
 
 import org.proygrad.einstein.api.ParameterTO;
 import org.springframework.stereotype.Service;

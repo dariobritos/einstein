@@ -25,37 +25,36 @@ public class PendingTaskEntity extends AbstractHibernateEntity<UUID> {
     @Column(name = "RUNNING")
     private Boolean running;
 
-
     public UUID getId() {
-        return id;
+    return id;
     }
 
     public void setId(UUID id) {
-        this.id = id;
+    this.id = id;
     }
 
     public UUID getRequestId() {
-        return requestId;
+    return requestId;
     }
 
     public void setRequestId(UUID requestId) {
-        this.requestId = requestId;
+    this.requestId = requestId;
     }
 
-     public Date getCreateDate() {
-         return createDate;
-     }
+    public Date getCreateDate() {
+     return createDate;
+    }
 
-     public void setCreateDate(Date createDate) {
-         this.createDate = createDate;
-     }
+    public void setCreateDate(Date createDate) {
+     this.createDate = createDate;
+    }
 
     public Boolean getRunning() {
-        return running;
+    return running;
     }
 
     public void setRunning(Boolean running) {
-        this.running = running;
+    this.running = running;
     }
 
 }
