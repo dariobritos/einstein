@@ -1,11 +1,16 @@
 package org.proygrad.einstein.service.nontransactional;
 
+import org.apache.commons.math3.random.RandomDataGenerator;
+import org.apache.commons.math3.random.RandomGenerator;
 import org.proygrad.einstein.api.ParameterTO;
 import org.proygrad.einstein.api.ScenarioTO;
 import org.proygrad.einstein.util.UnitSystem;
 import org.proygrad.einstein.util.UnitType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class CalculateSeSurfaceCrackStraightPipe {
@@ -47,7 +52,7 @@ public class CalculateSeSurfaceCrackStraightPipe {
     }
 
     public ScenarioTO calculateSimple(ScenarioTO scenario) {
-/*
+
         String unitSystem = scenario.getUnit();
         //Obtener variables de entrada
         ParameterTO crackDepth = scenario.getParameters().get(CRACK_DEPTH); // a
@@ -126,9 +131,8 @@ public class CalculateSeSurfaceCrackStraightPipe {
         scenario.getOutput().put("LrMax", LrMax);
         scenario.getOutput().put("i", i);
 
-        return scenario;*/
+        return scenario;
 
-return null;
     }
 
     private Double calculateKr(Double a, Double c, Double t, Double KIC, Double PRi, Double SigS) {
@@ -210,7 +214,7 @@ return null;
     // en este serian milimetros y megapascales.
     private Double loadAndNormalize(ParameterTO variable, String unitSystem) {
         switch (unitSystem) {
-            case UnitSystem.INTERNATIONAL_SYSTEM:
+            case UnitSystem.INTERNATIONAL:
                 switch (variable.getUnit()) {
                     case UnitType.CENTIMETRE:
                         variable.setValue(variable.getValue() / 10);
@@ -222,7 +226,7 @@ return null;
                         break;
                 }
                 break;
-            case UnitSystem.US_SYSTEM:
+            case UnitSystem.UNITEDSTATES:
                 switch (variable.getUnit()) {
                     case UnitType.THOU:
                         variable.setValue(variable.getValue() * 0.0254);

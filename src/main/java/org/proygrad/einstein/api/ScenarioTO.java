@@ -2,13 +2,12 @@ package org.proygrad.einstein.api;
 
 
 import java.util.Map;
-import java.util.UUID;
 
 public class ScenarioTO {
 
-    private UUID requestCalculation;
+    private String requestCalculation;
 
-    private UUID id;
+    private String id;
     private String type;
     private String unit;
 
@@ -19,11 +18,11 @@ public class ScenarioTO {
 
     private Map<String, Object> output;
 
-    public UUID getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -75,11 +74,11 @@ public class ScenarioTO {
         this.output = output;
     }
 
-    public UUID getRequestCalculation() {
+    public String getRequestCalculation() {
         return requestCalculation;
     }
 
-    public void setRequestCalculation(UUID requestCalculation) {
+    public void setRequestCalculation(String requestCalculation) {
         this.requestCalculation = requestCalculation;
     }
 

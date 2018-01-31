@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 public class PendingTaskServiceTX {
@@ -29,7 +28,7 @@ public class PendingTaskServiceTX {
     }
 
 
-    public void setCompleteTask(UUID entityId, boolean isRunning) {
+    public void setCompleteTask(String entityId, boolean isRunning) {
         PendingTaskEntity toSave = pendingTaskDAO.load(entityId);
         toSave.setRunning(isRunning);
 

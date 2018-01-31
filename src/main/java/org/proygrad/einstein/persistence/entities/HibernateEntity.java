@@ -1,4 +1,4 @@
-package org.proygrad.einstein.persistence;
+package org.proygrad.einstein.persistence.entities;
 
 public interface HibernateEntity<ID> {
 

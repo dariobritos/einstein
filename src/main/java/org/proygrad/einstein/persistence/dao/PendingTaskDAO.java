@@ -10,10 +10,9 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.List;
-import java.util.UUID;
 
 @Repository
-public class PendingTaskDAO  extends AbstractHibernateEntityDAO<PendingTaskEntity,UUID> {
+public class PendingTaskDAO  extends AbstractHibernateEntityDAO<PendingTaskEntity,String> {
 
 
     private static final String RUNNING = "running";

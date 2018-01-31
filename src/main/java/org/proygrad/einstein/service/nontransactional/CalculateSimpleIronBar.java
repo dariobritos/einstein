@@ -3,6 +3,7 @@ package org.proygrad.einstein.service.nontransactional;
 import org.apache.commons.math3.distribution.AbstractRealDistribution;
 import org.apache.commons.math3.distribution.LogNormalDistribution;
 import org.apache.commons.math3.distribution.NormalDistribution;
+import org.apache.commons.math3.random.RandomDataGenerator;
 import org.apache.commons.math3.random.RandomGenerator;
 import org.proygrad.einstein.api.ParameterTO;
 import org.proygrad.einstein.api.ScenarioTO;
@@ -43,7 +44,7 @@ public class CalculateSimpleIronBar {
 
     public ScenarioTO calculateSimple(ScenarioTO scenario) {
 
-       /* unitSystem = scenario.getUnit();
+       unitSystem = scenario.getUnit();
         ParameterTO barLoadParameterTO = scenario.getParameters().get(BAR_LOAD);
         ParameterTO barStrengthParameterTO = scenario.getParameters().get(BAR_STRENGTH);
 
@@ -83,13 +84,13 @@ public class CalculateSimpleIronBar {
         scenario.getOutput().put(FAILURE_PROBABILITY, prob);
 
 
-        return scenario;*/
-       return null;
+        return scenario;
+
     }
 
     private Double simulate(String key, ParameterTO variable) {
         if (ValueType.VARIABLE.equals(variable.getType())) {
-            //variable.setValue(distributionMap.get(key).sample());
+
             ParameterTO p = new ParameterTO();
             p.setUnit(variable.getUnit());
             p.setType(variable.getType());
@@ -123,7 +124,7 @@ public class CalculateSimpleIronBar {
     //TODO: completar segun se necesite!!!
     private ParameterTO loadAndNormalize(ParameterTO variable) {
         switch (unitSystem) {
-            case UnitSystem.INTERNATIONAL_SYSTEM :
+            case UnitSystem.INTERNATIONAL:
                 switch (variable.getUnit()) {
                     case UnitType.CENTIMETRE:
                         variable.setValue(variable.getValue() / 10);
@@ -135,7 +136,7 @@ public class CalculateSimpleIronBar {
                         break;
                 }
                 break;
-            case UnitSystem.US_SYSTEM:
+            case UnitSystem.UNITEDSTATES:
                 switch (variable.getUnit()) {
                     case UnitType.THOU:
                         variable.setValue(variable.getValue() * 0.0254);

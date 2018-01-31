@@ -6,7 +6,6 @@ import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.hibernate.proxy.HibernateProxy;
-import org.proygrad.einstein.persistence.HibernateEntity;
 
 import javax.persistence.Transient;
 import java.io.Serializable;

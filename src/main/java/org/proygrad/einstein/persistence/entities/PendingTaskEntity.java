@@ -1,23 +1,21 @@
 package org.proygrad.einstein.persistence.entities;
 
-import org.hibernate.annotations.GenericGenerator;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Date;
-import java.util.UUID;
 
 @Entity
 @Table(name = "PENDING_TASK")
-public class PendingTaskEntity extends AbstractHibernateEntity<UUID> {
+public class PendingTaskEntity extends AbstractHibernateEntity<String> {
 
     @Id
-    @GeneratedValue(generator = "uuid2")
-    @GenericGenerator(name = "uuid2", strategy = "uuid2")
     @Column(name = "ID")
-    private UUID id;
+    private String id;
 
     @Column(name = "REQUEST_ID")
-    private UUID requestId;
+    private String requestId;
 
     @Column(name = "CREATE_DATE")
      private Date createDate;
@@ -25,19 +23,19 @@ public class PendingTaskEntity extends AbstractHibernateEntity<UUID> {
     @Column(name = "RUNNING")
     private Boolean running;
 
-    public UUID getId() {
-    return id;
+    public String getId() {
+        return id;
     }
 
-    public void setId(UUID id) {
-    this.id = id;
+    public void setId(String id) {
+        this.id = id;
     }
 
-    public UUID getRequestId() {
+    public String getRequestId() {
     return requestId;
     }
 
-    public void setRequestId(UUID requestId) {
+    public void setRequestId(String requestId) {
     this.requestId = requestId;
     }
 

@@ -1,77 +1,86 @@
 package org.proygrad.einstein.persistence.config;
 
 
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.AvailableSettings;
+import com.mchange.v2.c3p0.ComboPooledDataSource;
+import com.mchange.v2.c3p0.PooledDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.orm.hibernate5.HibernateTransactionManager;
+import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
+import java.beans.PropertyVetoException;
 import java.util.Properties;
 
 @Configuration
-@EnableTransactionManagement
 public class EinsteinPersistenceConfig {
 
     private static final String ENTITIES_PACKAGE = "org.proygrad.einstein.persistence.entities";
     @Autowired
     private Environment env;
 
-
-    @Bean
-    public DataSource getDataSource() {
-        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setDriverClassName(env.getRequiredProperty("hibernate.connection.driver_class"));
-        dataSource.setUrl(env.getRequiredProperty("hibernate.connection.url"));
-        dataSource.setUsername(env.getRequiredProperty("hibernate.connection.username"));
-        dataSource.setPassword(env.getRequiredProperty("hibernate.connection.password"));
+    @Bean(name = "dataSource")
+    public LazyConnectionDataSourceProxy getDataSource() throws PropertyVetoException {
+        PooledDataSource targetDataSource = this.getMainDataSource();
+        LazyConnectionDataSourceProxy dataSource = new LazyConnectionDataSourceProxy(targetDataSource);
         return dataSource;
     }
 
-    /**
-     * Initialize hibernate properties
-     *
-     * @return Properties
-     */
-    private Properties getHibernateProperties() {
-        Properties properties = new Properties();
-        properties.put(AvailableSettings.DIALECT, env.getRequiredProperty("hibernate.dialect"));
-        properties.put(AvailableSettings.SHOW_SQL, env.getRequiredProperty("hibernate.show_sql"));
-        properties.put(AvailableSettings.STATEMENT_BATCH_SIZE, env.getRequiredProperty("hibernate.batch.size"));
-        properties.put(AvailableSettings.HBM2DDL_AUTO, env.getRequiredProperty("hibernate.hbm2ddl.auto"));
-        properties.put(AvailableSettings.CURRENT_SESSION_CONTEXT_CLASS, env.getRequiredProperty("hibernate.current.session.context.class"));
-        return properties;
+    @Bean(name = "mainDS", destroyMethod = "close")
+    public PooledDataSource getMainDataSource() throws PropertyVetoException {
+        ComboPooledDataSource dataSource = new ComboPooledDataSource();
+
+        dataSource.setDriverClass(env.getRequiredProperty("hibernate.connection.driver_class"));
+        dataSource.setJdbcUrl(env.getRequiredProperty("hibernate.connection.url"));
+        dataSource.setUser(env.getRequiredProperty("hibernate.connection.username"));
+        dataSource.setPassword(env.getRequiredProperty("hibernate.connection.password"));
+        dataSource.setMinPoolSize(Integer.parseInt(env.getRequiredProperty("hibernate.c3p0.min_size")));
+        dataSource.setMaxPoolSize(Integer.parseInt(env.getRequiredProperty("hibernate.c3p0.max_size")));
+        dataSource.setTestConnectionOnCheckin(false);
+        dataSource.setIdleConnectionTestPeriod(Integer.parseInt(env.getRequiredProperty("hibernate.c3p0.idle_test_period")));
+        dataSource.setPreferredTestQuery("/* PING */ sedlect 1");
+        dataSource.setMaxConnectionAge(Integer.parseInt(env.getRequiredProperty("hibernate.c3p0.max_connection_age")));
+        dataSource.setMaxStatements(Integer.parseInt(env.getRequiredProperty("hibernate.c3p0.max_statements")));
+        dataSource.setMaxStatementsPerConnection(Integer.parseInt(env.getRequiredProperty("hibernate.c3p0.max_statements_per_connection")));
+        dataSource.setNumHelperThreads(Integer.parseInt(env.getRequiredProperty("hibernate.c3p0.num_helper_threads")));
+
+        return dataSource;
     }
 
 
 
-    @Bean
-    public LocalSessionFactoryBean getSessionFactory() {
+    @Bean(name = "sessionFactory")
+    public LocalSessionFactoryBean getLocalSessionFactoryBean() throws PropertyVetoException {
+        DataSource dataSource = this.getDataSource();
+
+        Properties hibernateProperties = new Properties();
+        hibernateProperties.setProperty("hibernate.dialect", env.getRequiredProperty("hibernate.dialect"));
+        hibernateProperties.setProperty("hibernate.bytecode.use_reflection_optimizer", env.getRequiredProperty("hibernate.bytecode.use_reflection_optimizer"));
+        hibernateProperties.setProperty("hibernate.hbm2ddl.auto", env.getRequiredProperty("hibernate.hbm2ddl.auto"));
+        hibernateProperties.setProperty("hibernate.show_sql", env.getRequiredProperty("hibernate.show_sql"));
+        hibernateProperties.setProperty("hibernate.format_sql", env.getRequiredProperty("hibernate.format_sql"));
+        hibernateProperties.setProperty("hibernate.generate_statistics", env.getRequiredProperty("hibernate.generate_statistics"));
+        hibernateProperties.setProperty("hibernate.connection.autocommit", env.getRequiredProperty("hibernate.connection.autocommit"));
+        hibernateProperties.setProperty("hibernate.connection.isolation", "2");
+        hibernateProperties.setProperty("hibernate.connection.release_mode", "on_close");
+
+
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
-        sessionFactory.setDataSource(getDataSource());
+        sessionFactory.setDataSource(dataSource);
+        sessionFactory.setHibernateProperties(hibernateProperties);
         sessionFactory.setPackagesToScan(ENTITIES_PACKAGE);
-        sessionFactory.setHibernateProperties(getHibernateProperties());
+
         return sessionFactory;
     }
 
-
-    /**
-     * Initialize Transaction Manager
-     *
-     * @param sessionFactory
-     * @return HibernateTransactionManager
-     */
-    @Bean(name = "transactionManager")
-    public HibernateTransactionManager transactionManager(SessionFactory sessionFactory) {
-        HibernateTransactionManager txManager = new HibernateTransactionManager();
-        txManager.setSessionFactory(sessionFactory);
-        return txManager;
+    @Bean
+    public PersistenceExceptionTranslationPostProcessor getPersistenceExceptionTranslationPostProcessor() {
+        return new PersistenceExceptionTranslationPostProcessor();
     }
+
+
 
 }

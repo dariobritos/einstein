@@ -1,33 +1,46 @@
 package org.proygrad.einstein.persistence.config;
 
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Pointcut;
+import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.AdviceMode;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.annotation.ImportResource;
+import org.springframework.orm.hibernate5.HibernateTransactionManager;
+import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.TransactionManagementConfigurer;
+
+import java.beans.PropertyVetoException;
+
+
 
 @Configuration
-@Aspect
-@EnableAspectJAutoProxy(proxyTargetClass = true)
-@EnableTransactionManagement(mode = AdviceMode.PROXY,
-                proxyTargetClass = true)
-@ImportResource("classpath:tx-config.xml")
-public class TransactionConfig{
+@EnableTransactionManagement(mode = AdviceMode.PROXY, proxyTargetClass = true)
+public class TransactionConfig implements TransactionManagementConfigurer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TransactionConfig.class);
 
+    @Autowired
+    private EinsteinPersistenceConfig einsteinPersistenceConfig;
 
-
-    @Pointcut("execution(* org.proygrad.einstein.service.transactional.*.*(..))")
-    public void transactional() {
+    @Bean(name = "transactionManager")
+    public HibernateTransactionManager getHibernateTransactionManager() throws PropertyVetoException {
+        LocalSessionFactoryBean factory = this.einsteinPersistenceConfig.getLocalSessionFactoryBean();
+        SessionFactory sessionFactory = factory.getObject();
+        return new HibernateTransactionManager(sessionFactory);
     }
 
-    @Pointcut("execution(* org.proygrad.einstein.service.nontransactional.*.*(..))")
-    public void nonTransactional() {
+    @Override
+    public PlatformTransactionManager annotationDrivenTransactionManager() {
+        try {
+            return this.getHibernateTransactionManager();
+        } catch (PropertyVetoException e) {
+            LOGGER.error("Error configuring transaction event");
+            throw new RuntimeException(e);
+        }
     }
 
 }

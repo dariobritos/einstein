@@ -8,8 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.UUID;
-
 @RestController
 public class CalculationController {
 
@@ -17,7 +15,7 @@ public class CalculationController {
     private CalculationServiceTX calculationServiceTx;
 
     @RequestMapping(value = "/calculation", method = RequestMethod.POST)
-    public UUID calculationRequest(@RequestBody ScenarioTO scenarioTO) {
+    public String calculationRequest(@RequestBody ScenarioTO scenarioTO) {
         return calculationServiceTx.addCalculation(scenarioTO);
     }
 

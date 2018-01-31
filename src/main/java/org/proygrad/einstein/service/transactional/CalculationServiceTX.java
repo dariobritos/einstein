@@ -7,21 +7,24 @@ import org.proygrad.einstein.persistence.entities.PendingTaskEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class CalculationServiceTX {
 
     @Autowired
     private PendingTaskDAO pendingTaskDAO;
 
-    public UUID addCalculation(ScenarioTO scenarioTO) {
+    public String addCalculation(ScenarioTO scenarioTO) {
 
         PendingTaskEntity newTask = new PendingTaskEntity();
+        newTask.setId(UUID.randomUUID().toString());
         newTask.setRequestId(scenarioTO.getId());
         newTask.setCreateDate(new Date());
-        newTask.setRunning(Boolean.FALSE);
+        newTask.setRunning(false);
 
         pendingTaskDAO.save(newTask);
 
