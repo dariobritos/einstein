@@ -21,7 +21,7 @@ public class PendingTaskEntity extends AbstractHibernateEntity<String> {
      private Date createDate;
 
     @Column(name = "RUNNING")
-    private Boolean running;
+    private boolean running;
 
     public String getId() {
         return id;
@@ -47,11 +47,11 @@ public class PendingTaskEntity extends AbstractHibernateEntity<String> {
      this.createDate = createDate;
     }
 
-    public Boolean getRunning() {
+    public boolean getRunning() {
     return running;
     }
 
-    public void setRunning(Boolean running) {
+    public void setRunning(boolean running) {
     this.running = running;
     }
 

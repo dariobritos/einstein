@@ -36,10 +36,10 @@ public class PendingTaskDAO  extends AbstractHibernateEntityDAO<PendingTaskEntit
 
         cq.where(condition);
 
-
         TypedQuery<PendingTaskEntity> query = em.createQuery(cq);
-        return query.setMaxResults(maxLimitQuery).getResultList();
-
+        query.setFirstResult(0);
+        query.setMaxResults(maxLimitQuery);
+        return query.getResultList();
     }
 
 }

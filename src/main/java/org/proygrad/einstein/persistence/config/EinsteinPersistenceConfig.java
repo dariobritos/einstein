@@ -41,7 +41,7 @@ public class EinsteinPersistenceConfig {
         dataSource.setMaxPoolSize(Integer.parseInt(env.getRequiredProperty("hibernate.c3p0.max_size")));
         dataSource.setTestConnectionOnCheckin(false);
         dataSource.setIdleConnectionTestPeriod(Integer.parseInt(env.getRequiredProperty("hibernate.c3p0.idle_test_period")));
-        dataSource.setPreferredTestQuery("/* PING */ sedlect 1");
+        dataSource.setPreferredTestQuery("/* PING */ select 1");
         dataSource.setMaxConnectionAge(Integer.parseInt(env.getRequiredProperty("hibernate.c3p0.max_connection_age")));
         dataSource.setMaxStatements(Integer.parseInt(env.getRequiredProperty("hibernate.c3p0.max_statements")));
         dataSource.setMaxStatementsPerConnection(Integer.parseInt(env.getRequiredProperty("hibernate.c3p0.max_statements_per_connection")));

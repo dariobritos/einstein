@@ -1,6 +1,5 @@
 package org.proygrad.einstein.service.transactional;
 
-import org.proygrad.einstein.api.ScenarioTO;
 import org.proygrad.einstein.persistence.entities.PendingTaskEntity;
 import org.proygrad.einstein.service.nontransactional.CalculationService;
 import org.proygrad.einstein.service.nontransactional.TuringClient;
@@ -33,15 +32,15 @@ public class CalculationJob {
 
             pendingTaskServiceTX.setCompleteTask(pendingTask.getId(), true);
 
-            ScenarioTO scenario = turingClient.getScenario(pendingTask.getRequestId());
+            //ScenarioTO scenario = turingClient.getScenario(pendingTask.getRequestId());
 
-            ScenarioTO result = calculationService.calculationResolve(scenario);
+           // ScenarioTO result = calculationService.calculationResolve(scenario);
 
             // marcar como realizada
-            pendingTaskServiceTX.setCompleteTask(pendingTask.getId(), false);
+           // pendingTaskServiceTX.setCompleteTask(pendingTask.getId(), false);
 
             // avisar o enviar el resultado a turing.
-            turingClient.sendResult(result);
+           // turingClient.sendResult(result);
 
         }
     }
