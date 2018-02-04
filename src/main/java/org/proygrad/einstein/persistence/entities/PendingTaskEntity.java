@@ -23,6 +23,9 @@ public class PendingTaskEntity extends AbstractHibernateEntity<String> {
     @Column(name = "RUNNING")
     private boolean running;
 
+    @Column(name = "COMPLETE")
+    private boolean complete;
+
     public String getId() {
         return id;
     }
@@ -55,4 +58,15 @@ public class PendingTaskEntity extends AbstractHibernateEntity<String> {
     this.running = running;
     }
 
+    public boolean isRunning() {
+        return running;
+    }
+
+    public boolean isComplete() {
+        return complete;
+    }
+
+    public void setComplete(boolean complete) {
+        this.complete = complete;
+    }
 }

@@ -2,15 +2,18 @@ package org.proygrad.einstein.service.nontransactional;
 
 import org.apache.commons.math3.random.RandomDataGenerator;
 import org.apache.commons.math3.random.RandomGenerator;
+import org.proygrad.einstein.api.CommonItemTO;
 import org.proygrad.einstein.api.ParameterTO;
 import org.proygrad.einstein.api.ScenarioTO;
+import org.proygrad.einstein.util.CommonItemUtil;
+import org.proygrad.einstein.util.ParameterUtil;
 import org.proygrad.einstein.util.UnitSystem;
 import org.proygrad.einstein.util.UnitType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class CalculateSeSurfaceCrackStraightPipe {
@@ -53,20 +56,21 @@ public class CalculateSeSurfaceCrackStraightPipe {
 
     public ScenarioTO calculateSimple(ScenarioTO scenario) {
 
-        String unitSystem = scenario.getUnit();
+        String unitSystem = scenario.getUnitSystem();
         //Obtener variables de entrada
-        ParameterTO crackDepth = scenario.getParameters().get(CRACK_DEPTH); // a
-        ParameterTO crackLength = scenario.getParameters().get(CRACK_LENGTH); // c
-        ParameterTO wall_thickness = scenario.getParameters().get(WALL_THICKNESS); // t
-        ParameterTO fractureToughness = scenario.getParameters().get(FRACTURE_TOUGHNESS); // KIC
-        ParameterTO inner_radius = scenario.getParameters().get(INNER_RADIUS); // Ri
-        ParameterTO yieldStress = scenario.getParameters().get(YIELD_STRESS); // SigS
-        ParameterTO operatingPressure = scenario.getParameters().get(OPERATING_PRESSURE); // P
 
-        ParameterTO plasticCollapse = scenario.getMaterials().get(PLASTIC_COLLAPSE); // LrMax
+        ParameterTO crackDepth = ParameterUtil.getParameter(scenario.getParameters(), CRACK_DEPTH); // a
+        ParameterTO crackLength = ParameterUtil.getParameter(scenario.getParameters(), CRACK_LENGTH); // c
+        ParameterTO wall_thickness = ParameterUtil.getParameter(scenario.getParameters(), WALL_THICKNESS); // t
+        ParameterTO fractureToughness = ParameterUtil.getParameter(scenario.getParameters(), FRACTURE_TOUGHNESS); // KIC
+        ParameterTO inner_radius = ParameterUtil.getParameter(scenario.getParameters(), INNER_RADIUS); // Ri
+        ParameterTO yieldStress = ParameterUtil.getParameter(scenario.getParameters(), YIELD_STRESS); // SigS
+        ParameterTO operatingPressure = ParameterUtil.getParameter(scenario.getParameters(), OPERATING_PRESSURE); // P
+
+        ParameterTO plasticCollapse = ParameterUtil.getParameter(scenario.getParameters(), PLASTIC_COLLAPSE);  //scenario.getMaterials().get(); // LrMax
         Double LrMax = plasticCollapse.getValue();  // Plastic Collapse
 
-        Double seed = scenario.getConfigurations().get(SEED);
+        Double seed = CommonItemUtil.getValue(scenario.getConfiguration(), SEED);
 
         RandomDataGenerator ran = new RandomDataGenerator();
         RandomGenerator randomGenerator = ran.getRandomGenerator();
@@ -81,7 +85,8 @@ public class CalculateSeSurfaceCrackStraightPipe {
         this.probabilityDistribution.loadDistributionMap(OPERATING_PRESSURE, operatingPressure, randomGenerator);
 
         // N esta relacionado a la precision pedida.
-        Double N = scenario.getConfigurations().get(PRECISION);
+
+        Double N = CommonItemUtil.getValue(scenario.getConfiguration(), PRECISION);
         Double n = 0d; // failure occur
         Double i = 0d; // iteration
 
@@ -121,15 +126,19 @@ public class CalculateSeSurfaceCrackStraightPipe {
         //Step 5 - Determine the failure probability
         //1/N por Sumatoria de hj de 1 a N
 
+        Double prob= n / N;
+
         if (scenario.getOutput() == null) {
-            Map<String, Object> output = new HashMap<String, Object>();
+            List<CommonItemTO> output = new ArrayList<CommonItemTO>();
+
             scenario.setOutput(output);
         }
-        scenario.getOutput().put(FAILURE_PROBABILITY, n / N);
-        scenario.getOutput().put("n", n);
-        scenario.getOutput().put("N", N);
-        scenario.getOutput().put("LrMax", LrMax);
-        scenario.getOutput().put("i", i);
+
+        CommonItemTO out = new CommonItemTO();
+        out.setCode(FAILURE_PROBABILITY);
+        out.setValue(prob.toString());
+
+        scenario.getOutput().add(out);
 
         return scenario;
 

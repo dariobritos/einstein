@@ -1,22 +1,17 @@
 package org.proygrad.einstein.api;
 
 
-import java.util.Map;
+import java.util.List;
 
 public class ScenarioTO {
 
-    private String requestCalculation;
-
     private String id;
     private String type;
-    private String unit;
-
-    private Map<String, ParameterTO> parameters;
-    private Map<String, ParameterTO> materials;
-
-    private Map<String, Double> configurations;
-
-    private Map<String, Object> output;
+    private String unitSystem;
+    private List<ParameterTO> parameters;
+    private List<CommonItemTO> configuration;
+    private String comments;
+    private List<CommonItemTO> output;
 
     public String getId() {
         return id;
@@ -34,52 +29,44 @@ public class ScenarioTO {
         this.type = type;
     }
 
-    public String getUnit() {
-        return unit;
+    public String getUnitSystem() {
+        return unitSystem;
     }
 
-    public void setUnit(String unit) {
-        this.unit = unit;
+    public void setUnitSystem(String unitSystem) {
+        this.unitSystem = unitSystem;
     }
 
-    public Map<String, ParameterTO> getParameters() {
+    public List<ParameterTO> getParameters() {
         return parameters;
     }
 
-    public void setParameters(Map<String, ParameterTO> parameters) {
+    public void setParameters(List<ParameterTO> parameters) {
         this.parameters = parameters;
     }
 
-    public Map<String, ParameterTO> getMaterials() {
-        return materials;
+    public List<CommonItemTO> getConfiguration() {
+        return configuration;
     }
 
-    public void setMaterials(Map<String, ParameterTO> materials) {
-        this.materials = materials;
+    public void setConfiguration(List<CommonItemTO> configuration) {
+        this.configuration = configuration;
     }
 
-    public Map<String, Double> getConfigurations() {
-        return configurations;
+    public String getComments() {
+        return comments;
     }
 
-    public void setConfigurations(Map<String, Double> configurations) {
-        this.configurations = configurations;
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 
-    public Map<String, Object> getOutput() {
+    public List<CommonItemTO> getOutput() {
         return output;
     }
 
-    public void setOutput(Map<String, Object> output) {
+    public void setOutput(List<CommonItemTO> output) {
         this.output = output;
     }
-
-    public String getRequestCalculation() {
-        return requestCalculation;
-    }
-
-    public void setRequestCalculation(String requestCalculation) {
-        this.requestCalculation = requestCalculation;
-    }
-
 }
+

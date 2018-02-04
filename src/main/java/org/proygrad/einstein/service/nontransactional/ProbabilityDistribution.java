@@ -4,12 +4,15 @@ import org.apache.commons.math3.distribution.AbstractRealDistribution;
 import org.apache.commons.math3.distribution.LogNormalDistribution;
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.random.RandomGenerator;
+import org.proygrad.einstein.api.CommonItemTO;
 import org.proygrad.einstein.api.ParameterTO;
+import org.proygrad.einstein.util.CommonItemUtil;
 import org.proygrad.einstein.util.DistributionType;
 import org.proygrad.einstein.util.ValueType;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -37,15 +40,18 @@ public class ProbabilityDistribution {
 
     public void loadDistributionMap(String key, ParameterTO variable, RandomGenerator randomGenerator) {
 
-        switch (variable.getDistributionTO().getType()) {
+        List<CommonItemTO> parameters = variable.getDistribution().getParameters();
+
+        switch (variable.getDistribution().getType()) {
             case DistributionType.NORMAL:
-                Double variance = variable.getDistributionTO().getParameters().get(VARIANCE);
+                Double variance = CommonItemUtil.getValue(parameters, VARIANCE);
                 Double mean = variable.getValue();
                 distributionMap.put(key, new NormalDistribution(randomGenerator, mean, variance));
                 break;
             case DistributionType.LOGNORMAL:
                 double m = variable.getValue();
-                double v = Math.pow(variable.getDistributionTO().getParameters().get(SCALE),2);
+                double scale = CommonItemUtil.getValue(parameters, SCALE);
+                double v = Math.pow(scale,2);
 
                 double mu = Math.log(Math.pow(m,2)/Math.sqrt(v+Math.pow(m,2)));
                 double sigma = Math.sqrt(Math.log((v/(Math.pow(m,2)) + 1)));

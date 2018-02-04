@@ -1,8 +1,9 @@
 package org.proygrad.einstein.service.transactional;
 
+import org.proygrad.einstein.api.ScenarioTO;
 import org.proygrad.einstein.persistence.entities.PendingTaskEntity;
+import org.proygrad.einstein.rest.client.TuringClient;
 import org.proygrad.einstein.service.nontransactional.CalculationService;
-import org.proygrad.einstein.service.nontransactional.TuringClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -20,7 +21,7 @@ public class CalculationJob {
     @Autowired
     private CalculationService calculationService;
 
-     //@Autowired
+    @Autowired
     private TuringClient turingClient;
 
     @Scheduled(fixedDelay = 7200, initialDelay = 900)
@@ -30,17 +31,26 @@ public class CalculationJob {
 
         for(PendingTaskEntity pendingTask : pendingTaskEntities) {
 
-            pendingTaskServiceTX.setCompleteTask(pendingTask.getId(), true);
+            pendingTaskServiceTX.setCompleteTask(pendingTask.getId(), true, false);
 
-            //ScenarioTO scenario = turingClient.getScenario(pendingTask.getRequestId());
+            System.out.print(" pedireeeeee   eeee " +pendingTask.getRequestId());
+            System.out.print(" pedireeeeee   eeee " +pendingTask.getRequestId());
+            System.out.print(" pedireeeeee   eeee " +pendingTask.getRequestId());
+            System.out.print(" pedireeeeee   eeee " +pendingTask.getRequestId());
 
-           // ScenarioTO result = calculationService.calculationResolve(scenario);
+            ScenarioTO scenario = turingClient.getScenario(pendingTask.getRequestId());
+
+            System.out.print(" RECIBI la solicutud de calculo!!!!");
+            System.out.print(" RECIBI la solicutud de calculo!!!!");
+            System.out.print(" RECIBI la solicutud de calculo!!!!");
+
+            ScenarioTO result = calculationService.calculationResolve(scenario);
 
             // marcar como realizada
-           // pendingTaskServiceTX.setCompleteTask(pendingTask.getId(), false);
+            pendingTaskServiceTX.setCompleteTask(pendingTask.getId(), false, true);
 
             // avisar o enviar el resultado a turing.
-           // turingClient.sendResult(result);
+            turingClient.sendResult(result);
 
         }
     }

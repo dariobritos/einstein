@@ -16,6 +16,7 @@ public class PendingTaskDAO  extends AbstractHibernateEntityDAO<PendingTaskEntit
 
 
     private static final String RUNNING = "running";
+    private static final String COMPLETE = "complete";
 
 
     public List<PendingTaskEntity> getPendingTask(int maxLimitQuery) {
@@ -31,8 +32,9 @@ public class PendingTaskDAO  extends AbstractHibernateEntityDAO<PendingTaskEntit
         cq.select(from);
 
         Predicate c1 = cb.equal(from.get(RUNNING), false);
+        Predicate c2 = cb.equal(from.get(COMPLETE), false);
 
-        Predicate condition = cb.and(c1);
+        Predicate condition = cb.and(c1,c2);
 
         cq.where(condition);
 

@@ -27,10 +27,10 @@ public class PendingTaskServiceTX {
         return request;
     }
 
-
-    public void setCompleteTask(String entityId, boolean isRunning) {
+    public void setCompleteTask(String entityId, boolean isRunning, boolean isComplete) {
         PendingTaskEntity toSave = pendingTaskDAO.load(entityId);
         toSave.setRunning(isRunning);
+        toSave.setComplete(isComplete);
 
         // de seguro este de mas!
        // pendingTaskDAO.save(toSave);

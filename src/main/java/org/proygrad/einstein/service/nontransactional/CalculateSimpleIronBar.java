@@ -5,15 +5,15 @@ import org.apache.commons.math3.distribution.LogNormalDistribution;
 import org.apache.commons.math3.distribution.NormalDistribution;
 import org.apache.commons.math3.random.RandomDataGenerator;
 import org.apache.commons.math3.random.RandomGenerator;
+import org.proygrad.einstein.api.CommonItemTO;
 import org.proygrad.einstein.api.ParameterTO;
 import org.proygrad.einstein.api.ScenarioTO;
-import org.proygrad.einstein.util.DistributionType;
-import org.proygrad.einstein.util.UnitSystem;
-import org.proygrad.einstein.util.UnitType;
-import org.proygrad.einstein.util.ValueType;
+import org.proygrad.einstein.util.*;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -44,12 +44,12 @@ public class CalculateSimpleIronBar {
 
     public ScenarioTO calculateSimple(ScenarioTO scenario) {
 
-       unitSystem = scenario.getUnit();
-        ParameterTO barLoadParameterTO = scenario.getParameters().get(BAR_LOAD);
-        ParameterTO barStrengthParameterTO = scenario.getParameters().get(BAR_STRENGTH);
+        unitSystem = scenario.getUnitSystem();
 
-        Double seed = scenario.getConfigurations().get(SEED);
+        ParameterTO barLoadParameterTO = ParameterUtil.getParameter(scenario.getParameters(), BAR_LOAD);
+        ParameterTO barStrengthParameterTO = ParameterUtil.getParameter(scenario.getParameters(), BAR_STRENGTH);
 
+        Double seed = CommonItemUtil.getValue(scenario.getConfiguration(), SEED);
 
         RandomDataGenerator ran = new RandomDataGenerator();
         RandomGenerator randomGenerator = ran.getRandomGenerator();
@@ -60,7 +60,7 @@ public class CalculateSimpleIronBar {
         this.loadDistributionMap(BAR_STRENGTH, barStrengthParameterTO, randomGenerator);
 
 
-        Double precision = scenario.getConfigurations().get(PRECISION);
+        Double precision = CommonItemUtil.getValue(scenario.getConfiguration(), PRECISION);
         Integer failCount = 0;
 
         for (double i = 0; i < precision; i++) {
@@ -78,10 +78,16 @@ public class CalculateSimpleIronBar {
 
 
         if (scenario.getOutput() == null) {
-            Map<String, Object> output = new HashMap<String, Object>();
+            List<CommonItemTO> output = new ArrayList<CommonItemTO>();
+
             scenario.setOutput(output);
         }
-        scenario.getOutput().put(FAILURE_PROBABILITY, prob);
+
+        CommonItemTO out = new CommonItemTO();
+        out.setCode(FAILURE_PROBABILITY);
+        out.setValue(prob.toString());
+
+        scenario.getOutput().add(out);
 
 
         return scenario;
@@ -103,14 +109,15 @@ public class CalculateSimpleIronBar {
     }
 
     private void loadDistributionMap(String key, ParameterTO variable, RandomGenerator randomGenerator) {
-        switch (variable.getDistributionTO().getType()) {
+
+        switch (variable.getDistribution().getType()) {
             case DistributionType.NORMAL:
-                Double variance = variable.getDistributionTO().getParameters().get(VARIANCE);
+                Double variance = CommonItemUtil.getValue(variable.getDistribution().getParameters(), VARIANCE);
                 Double mean = variable.getValue();
                 distributionMap.put(key, new NormalDistribution(randomGenerator, mean, variance));
                 break;
             case DistributionType.LOGNORMAL:
-                Double scale = variable.getDistributionTO().getParameters().get(SCALE);
+                Double scale = CommonItemUtil.getValue(variable.getDistribution().getParameters(), SCALE);
                 Double shape = variable.getValue();
                 distributionMap.put(key, new LogNormalDistribution(randomGenerator, scale, shape));
                 break;
