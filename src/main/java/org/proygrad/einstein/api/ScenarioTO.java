@@ -1,9 +1,10 @@
 package org.proygrad.einstein.api;
 
 
+import java.io.Serializable;
 import java.util.List;
 
-public class ScenarioTO {
+public class ScenarioTO implements Serializable {
 
     private String id;
     private String type;

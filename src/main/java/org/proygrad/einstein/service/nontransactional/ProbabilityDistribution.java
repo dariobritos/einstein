@@ -40,27 +40,29 @@ public class ProbabilityDistribution {
 
     public void loadDistributionMap(String key, ParameterTO variable, RandomGenerator randomGenerator) {
 
-        List<CommonItemTO> parameters = variable.getDistribution().getParameters();
+        if(ValueType.VARIABLE.equals(variable.getType())) {
+            List<CommonItemTO> parameters = variable.getDistribution().getParameters();
 
-        switch (variable.getDistribution().getType()) {
-            case DistributionType.NORMAL:
-                Double variance = CommonItemUtil.getValue(parameters, VARIANCE);
-                Double mean = variable.getValue();
-                distributionMap.put(key, new NormalDistribution(randomGenerator, mean, variance));
-                break;
-            case DistributionType.LOGNORMAL:
-                double m = variable.getValue();
-                double scale = CommonItemUtil.getValue(parameters, SCALE);
-                double v = Math.pow(scale,2);
+            switch (variable.getDistribution().getType()) {
+                case DistributionType.NORMAL:
+                    Double variance = CommonItemUtil.getValue(parameters, VARIANCE);
+                    Double mean = variable.getValue();
+                    distributionMap.put(key, new NormalDistribution(randomGenerator, mean, variance));
+                    break;
+                case DistributionType.LOGNORMAL:
+                    double m = variable.getValue();
+                    double scale = CommonItemUtil.getValue(parameters, SCALE);
+                    double v = Math.pow(scale, 2);
 
-                double mu = Math.log(Math.pow(m,2)/Math.sqrt(v+Math.pow(m,2)));
-                double sigma = Math.sqrt(Math.log((v/(Math.pow(m,2)) + 1)));
+                    double mu = Math.log(Math.pow(m, 2) / Math.sqrt(v + Math.pow(m, 2)));
+                    double sigma = Math.sqrt(Math.log((v / (Math.pow(m, 2)) + 1)));
 
-                distributionMap.put(key, new LogNormalDistribution(randomGenerator, mu, sigma));
-                break;
-            case DistributionType.POISSON:
-                //TODO: VER DE AGREGAR! PARA MAS FUNCIONABILIDAD.
-                break;
+                    distributionMap.put(key, new LogNormalDistribution(randomGenerator, mu, sigma));
+                    break;
+                case DistributionType.POISSON:
+                    //TODO: VER DE AGREGAR! PARA MAS FUNCIONABILIDAD.
+                    break;
+            }
         }
     }
 }
