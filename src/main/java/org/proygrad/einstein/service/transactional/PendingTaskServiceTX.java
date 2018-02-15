@@ -32,7 +32,5 @@ public class PendingTaskServiceTX {
         toSave.setRunning(isRunning);
         toSave.setComplete(isComplete);
 
-        // de seguro este de mas!
-       // pendingTaskDAO.save(toSave);
     }
 }

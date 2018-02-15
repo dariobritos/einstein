@@ -33,28 +33,9 @@ public class CalculationJob {
 
             pendingTaskServiceTX.setCompleteTask(pendingTask.getId(), true, false);
 
-            System.out.println(" pedireeeeee   eeee " +pendingTask.getRequestId());
-            System.out.println(" pedireeeeee   eeee " +pendingTask.getRequestId());
-            System.out.println(" pedireeeeee   eeee " +pendingTask.getRequestId());
-            System.out.println(" pedireeeeee   eeee " +pendingTask.getRequestId());
-
             ScenarioTO scenario = turingClient.getScenario(pendingTask.getRequestId());
 
-            System.out.println(" RECIBI la solicutud de calculo!!!!");
-            System.out.println(" RECIBI la solicutud de calculo!!!!");
-            System.out.println(" RECIBI la solicutud de calculo!!!!");
-
             ScenarioTO result = calculationService.calculationResolve(scenario);
-
-            System.out.println(" CALCULEEEEEEEE!!!!");
-            System.out.println(" CALCULEEEEEEEE!!!!");
-            System.out.println(" CALCULEEEEEEEE!!!!");
-
-
-            System.out.println(" DIOOOOOOOOOOOO!!!!" +result.getOutput().get(0).getCode()+ " - "+   result.getOutput().get(0).getValue().toString());
-            System.out.println(" DIOOOOOOOOOOOO!!!!" +result.getOutput().get(0).getCode()+ " - "+   result.getOutput().get(0).getValue().toString());
-            System.out.println(" DIOOOOOOOOOOOO!!!!" +result.getOutput().get(0).getCode()+ " - "+   result.getOutput().get(0).getValue().toString());
-
 
             // marcar como realizada
             pendingTaskServiceTX.setCompleteTask(pendingTask.getId(), false, true);

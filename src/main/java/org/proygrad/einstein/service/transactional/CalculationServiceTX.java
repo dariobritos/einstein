@@ -25,6 +25,7 @@ public class CalculationServiceTX {
         newTask.setRequestId(scenarioTO.getId());
         newTask.setCreateDate(new Date());
         newTask.setRunning(false);
+        newTask.setComplete(false);
 
         pendingTaskDAO.save(newTask);
 
