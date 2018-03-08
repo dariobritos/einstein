@@ -3,12 +3,12 @@ package org.proygrad.einstein.util;
 public class UnitType {
 
     //INTERNATIONAL
-    //** DISTANCE (milimeter, centimeter)
-    public static final String MM = "MM";
-    public static final String CM = "CM";
+    //** DISTANCE (millimeter, centimeter)
+    public static final String MILLIMETER = "MM";
+    public static final String CENTIMETER = "CM";
     //** PRESURE (megapascal, kilopascal)
-    public static final String MP = "MP";
-    public static final String KP = "KP";
+    public static final String MEGAPASCAL = "MPA";
+    public static final String KILOPASCAL = "KPA";
 
     //UNITEDSTATES
     //** DISTANCE

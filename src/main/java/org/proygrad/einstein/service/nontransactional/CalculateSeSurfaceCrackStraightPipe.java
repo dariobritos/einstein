@@ -225,13 +225,13 @@ public class CalculateSeSurfaceCrackStraightPipe {
         switch (unitSystem) {
             case UnitSystem.INTERNATIONAL:
                 switch (variable.getUnit()) {
-                    case UnitType.CM:
+                    case UnitType.CENTIMETER:
                         variable.setValue(variable.getValue() / 10);
-                        variable.setUnit(UnitType.MM);
+                        variable.setUnit(UnitType.MILLIMETER);
                         break;
-                    case UnitType.KP:
+                    case UnitType.KILOPASCAL:
                         variable.setValue(variable.getValue() * 1000);
-                        variable.setUnit(UnitType.MP);
+                        variable.setUnit(UnitType.MEGAPASCAL);
                         break;
                 }
                 break;
@@ -239,23 +239,23 @@ public class CalculateSeSurfaceCrackStraightPipe {
                 switch (variable.getUnit()) {
                     case UnitType.THOU:
                         variable.setValue(variable.getValue() * 0.0254);
-                        variable.setUnit(UnitType.MM);
+                        variable.setUnit(UnitType.MILLIMETER);
                         break;
                     case UnitType.INCH:
                         variable.setValue(variable.getValue() * 25.4);
-                        variable.setUnit(UnitType.MM);
+                        variable.setUnit(UnitType.MILLIMETER);
                         break;
                     case UnitType.FOOT:
                         variable.setValue(variable.getValue() * 304.8);
-                        variable.setUnit(UnitType.MM);
+                        variable.setUnit(UnitType.MILLIMETER);
                         break;
                     case UnitType.NW_MM2:
                         variable.setValue(variable.getValue());
-                        variable.setUnit(UnitType.MP);
+                        variable.setUnit(UnitType.MEGAPASCAL);
                         break;
                     case UnitType.NW_CM2:
                         variable.setValue(variable.getValue() * 0.01);
-                        variable.setUnit(UnitType.MP);
+                        variable.setUnit(UnitType.MEGAPASCAL);
                         break;
                 }
                 break;
