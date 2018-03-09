@@ -9,6 +9,7 @@ import org.proygrad.einstein.api.CommonItemTO;
 import org.proygrad.einstein.api.ParameterTO;
 import org.proygrad.einstein.api.ScenarioTO;
 import org.proygrad.einstein.util.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -33,7 +34,9 @@ public class CalculateSimpleIronBar {
 
 
     private Map<String, AbstractRealDistribution> distributionMap = new HashMap<String, AbstractRealDistribution>();
-    private String unitSystem;
+
+    @Autowired
+    private ProbabilityDistribution probabilityDistribution;
 
     public ScenarioTO calculate(ScenarioTO scenario) {
 
@@ -44,7 +47,7 @@ public class CalculateSimpleIronBar {
 
     public ScenarioTO calculateSimple(ScenarioTO scenario) {
 
-        unitSystem = scenario.getUnitSystem();
+        String unitSystem = scenario.getUnitSystem();
 
         ParameterTO barLoadParameterTO = ParameterUtil.getParameter(scenario.getParameters(), BAR_LOAD);
         ParameterTO barStrengthParameterTO = ParameterUtil.getParameter(scenario.getParameters(), BAR_STRENGTH);
@@ -55,9 +58,8 @@ public class CalculateSimpleIronBar {
         RandomGenerator randomGenerator = ran.getRandomGenerator();
         randomGenerator.setSeed(seed.longValue());
 
-
-        this.loadDistributionMap(BAR_LOAD, barLoadParameterTO, randomGenerator);
-        this.loadDistributionMap(BAR_STRENGTH, barStrengthParameterTO, randomGenerator);
+        this.probabilityDistribution.loadDistributionMap(BAR_LOAD, barLoadParameterTO, randomGenerator);
+        this.probabilityDistribution.loadDistributionMap(BAR_STRENGTH, barStrengthParameterTO, randomGenerator);
 
 
         Double precision = CommonItemUtil.getValue(scenario.getConfiguration(), PRECISION);
@@ -65,8 +67,9 @@ public class CalculateSimpleIronBar {
 
         for (double i = 0; i < precision; i++) {
 
-            Double barLoadSim = simulate(BAR_LOAD, barLoadParameterTO);
-            Double barStrengthSim = simulate(BAR_STRENGTH, barStrengthParameterTO);
+
+            Double barLoadSim = loadAndNormalize(this.probabilityDistribution.simulate(BAR_LOAD, barLoadParameterTO), unitSystem);
+            Double barStrengthSim = loadAndNormalize(this.probabilityDistribution.simulate(BAR_STRENGTH, barStrengthParameterTO), unitSystem);
 
             if (barLoadSim > barStrengthSim) {
                 failCount++;
@@ -94,20 +97,6 @@ public class CalculateSimpleIronBar {
 
     }
 
-    private Double simulate(String key, ParameterTO variable) {
-        if (ValueType.VARIABLE.equals(variable.getType())) {
-
-            ParameterTO p = new ParameterTO();
-            p.setUnit(variable.getUnit());
-            p.setType(variable.getType());
-            p.setValue(distributionMap.get(key).sample());
-
-            return loadAndNormalize(p).getValue();
-        }
-
-        return loadAndNormalize(variable).getValue();
-    }
-
     private void loadDistributionMap(String key, ParameterTO variable, RandomGenerator randomGenerator) {
 
         switch (variable.getDistribution().getType()) {
@@ -129,7 +118,9 @@ public class CalculateSimpleIronBar {
 
 
     //TODO: completar segun se necesite!!!
-    private ParameterTO loadAndNormalize(ParameterTO variable) {
+    //TODO: luego de sacar a la clase concreta me da la interrogante de agregar algo mas por q lo normalizado para un calculo no es lo mismo para otro.
+    // en este serian milimetros y megapascales.
+    private Double loadAndNormalize(ParameterTO variable, String unitSystem) {
         switch (unitSystem) {
             case UnitSystem.INTERNATIONAL:
                 switch (variable.getUnit()) {
@@ -168,6 +159,6 @@ public class CalculateSimpleIronBar {
                 }
                 break;
         }
-        return variable;
+        return variable.getValue();
     }
 }
