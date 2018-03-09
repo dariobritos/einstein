@@ -8,7 +8,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class TuringClient {
 
-    private static String DIR_TURING = "http://turing";
+    private static String DIR_TURING = "http://localhost:9040";
 
     private static String SCENARIO = DIR_TURING + "/scenario/";
     private static String PATCH_OUTPUT =  "/output";

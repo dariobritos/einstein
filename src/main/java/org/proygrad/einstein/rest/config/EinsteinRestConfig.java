@@ -10,7 +10,7 @@ import org.springframework.web.client.RestTemplate;
 public class EinsteinRestConfig {
 
     @Bean
-    @LoadBalanced
+    //@LoadBalanced
     public RestTemplate restTemplate(){
 
         RestTemplate restTemplate = new RestTemplate();
