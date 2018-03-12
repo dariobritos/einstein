@@ -92,13 +92,17 @@ public class CalculateSeSurfaceCrackStraightPipe {
 
         do {
             //Step 1 - Random variables
-            Double a = loadAndNormalize(this.probabilityDistribution.simulatePositive(CRACK_DEPTH, crackDepth), unitSystem);
-            Double c = loadAndNormalize(this.probabilityDistribution.simulatePositive(CRACK_LENGTH, crackLength), unitSystem);
-            Double t = loadAndNormalize(this.probabilityDistribution.simulatePositive(WALL_THICKNESS, wall_thickness), unitSystem);
+            Double a  = loadAndNormalize(this.probabilityDistribution.simulatePositive(CRACK_DEPTH, crackDepth), unitSystem);
+            Double c2 = loadAndNormalize(this.probabilityDistribution.simulatePositive(CRACK_LENGTH, crackLength), unitSystem);
+            Double c  = c2/2;
+            Double t  = loadAndNormalize(this.probabilityDistribution.simulatePositive(WALL_THICKNESS, wall_thickness), unitSystem);
             Double KIC = loadAndNormalize(this.probabilityDistribution.simulatePositive(FRACTURE_TOUGHNESS, fractureToughness), unitSystem);
             Double Ri = loadAndNormalize(this.probabilityDistribution.simulatePositive(INNER_RADIUS, inner_radius), unitSystem);
             Double SigS = loadAndNormalize(this.probabilityDistribution.simulatePositive(YIELD_STRESS, yieldStress), unitSystem);
             Double P = loadAndNormalize(this.probabilityDistribution.simulatePositive(OPERATING_PRESSURE, operatingPressure), unitSystem);
+
+            //TODO consultado a rodolfo deberia ser analogo al SigB el motivo del cual.
+            Double Pb = 0.0001;
 
 
             Double PRi = P * Ri;
@@ -106,12 +110,12 @@ public class CalculateSeSurfaceCrackStraightPipe {
             //calculateTxtSupport.mostrarCalculateOrig(a, c, t, KIC, PRi, SigS, P);
 
             //Step 2 - Calculate toughness ratio Kr
-            Double Kr = calculateKr(a, c, t, KIC, PRi, SigS);
+            Double Kr = calculateKr(a, c, t, KIC, PRi, P, Ri);
 
             //calculateTxtSupport.mostrarCalculateKr(a, c, t, KIC, PRi, SigS, Kr);
 
             //Step 3 - Calculate load ratio Lr
-            Double Lr = calculateLr(a, c, t, Ri, PRi, P, SigS);
+            Double Lr = calculateLr(a, c, t, Ri, PRi, Pb, SigS);
 
             //calculateTxtSupport.mostrarCalculateLr(a, c, t, Ri, PRi, P, SigS, Lr);
 
@@ -144,7 +148,7 @@ public class CalculateSeSurfaceCrackStraightPipe {
 
     }
 
-    private Double calculateKr(Double a, Double c, Double t, Double KIC, Double PRi, Double SigS) {
+    private Double calculateKr(Double a, Double c, Double t, Double KIC, Double PRi, Double P, Double Ri) {
 
         //TODO: c nunca 0
         //TODO: t nunca 0
@@ -152,6 +156,7 @@ public class CalculateSeSurfaceCrackStraightPipe {
         Double adivc = a / c;
         Double adivt = a / t;
         Double powAdivt2 = Math.pow(adivt, 2);
+        Double aInMetres = a / 1000;
 
 
         Double SigM = PRi / t;
@@ -167,14 +172,22 @@ public class CalculateSeSurfaceCrackStraightPipe {
         Double fb2 = (0.55 - (1.05 * (Math.pow(adivc, 0.75))) + (0.47 * (Math.pow(adivc, 1.5)))) * powAdivt2;
         Double fb = (fb0 + fb1 + fb2) * fm;
 
-        Double KI = Math.sqrt(Math.PI * a * ((SigM * fm) + (SigS * fb)));
+        // TODO: esto hasta que rodolfo nos envie el calculo correspondiente si es este nose ... haz haz haz...
+        Double M = P*2*c;
+        Double y =(Ri+t)/2;
+        Double I =(Math.PI/64)*(Math.pow((Ri+t),4) - Math.pow((Ri),4));
+        Double SigB = M*y/I;
+
+        SigB=0.0001;
+
+        Double KI = Math.sqrt(Math.PI * aInMetres * ((SigM * fm) + (SigB * fb)));
 
         //calculateTxtSupport.mostrarCalculateKrDentro(adivc, adivt, powAdivt2, SigM, fm0,fm1,fm2,fm3,fm, fb1,fb2,fb, KI);
 
         return KI / KIC;
     }
 
-    private Double calculateLr(Double a, Double c, Double t, Double Ri, Double PRi, Double P, Double SigS) {
+    private Double calculateLr(Double a, Double c, Double t, Double Ri, Double PRi, Double Pb, Double SigS) {
 
         Double adivt = a / t;
         Double alpha = adivt / (1 + (t / c));
@@ -184,7 +197,8 @@ public class CalculateSeSurfaceCrackStraightPipe {
 
         Double Pm = PRi / t;
 
-        Double SigRef = (1.2 * Ms * Pm) + (2 * P) / (3 * Math.pow((1 - alpha), 2));
+        //TODO: tambien consultado a RODOLFO que iria en Pb
+        Double SigRef = (1.2 * Ms * Pm) + (2 * Pb) / (3 * Math.pow((1 - alpha), 2));
 
         return SigRef / SigS;
     }
