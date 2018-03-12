@@ -92,13 +92,13 @@ public class CalculateSeSurfaceCrackStraightPipe {
 
         do {
             //Step 1 - Random variables
-            Double a = loadAndNormalize(this.probabilityDistribution.simulate(CRACK_DEPTH, crackDepth), unitSystem);
-            Double c = loadAndNormalize(this.probabilityDistribution.simulate(CRACK_LENGTH, crackLength), unitSystem);
-            Double t = loadAndNormalize(this.probabilityDistribution.simulate(WALL_THICKNESS, wall_thickness), unitSystem);
-            Double KIC = loadAndNormalize(this.probabilityDistribution.simulate(FRACTURE_TOUGHNESS, fractureToughness), unitSystem);
-            Double Ri = loadAndNormalize(this.probabilityDistribution.simulate(INNER_RADIUS, inner_radius), unitSystem);
-            Double SigS = loadAndNormalize(this.probabilityDistribution.simulate(YIELD_STRESS, yieldStress), unitSystem);
-            Double P = loadAndNormalize(this.probabilityDistribution.simulate(OPERATING_PRESSURE, operatingPressure), unitSystem);
+            Double a = loadAndNormalize(this.probabilityDistribution.simulatePositive(CRACK_DEPTH, crackDepth), unitSystem);
+            Double c = loadAndNormalize(this.probabilityDistribution.simulatePositive(CRACK_LENGTH, crackLength), unitSystem);
+            Double t = loadAndNormalize(this.probabilityDistribution.simulatePositive(WALL_THICKNESS, wall_thickness), unitSystem);
+            Double KIC = loadAndNormalize(this.probabilityDistribution.simulatePositive(FRACTURE_TOUGHNESS, fractureToughness), unitSystem);
+            Double Ri = loadAndNormalize(this.probabilityDistribution.simulatePositive(INNER_RADIUS, inner_radius), unitSystem);
+            Double SigS = loadAndNormalize(this.probabilityDistribution.simulatePositive(YIELD_STRESS, yieldStress), unitSystem);
+            Double P = loadAndNormalize(this.probabilityDistribution.simulatePositive(OPERATING_PRESSURE, operatingPressure), unitSystem);
 
 
             Double PRi = P * Ri;

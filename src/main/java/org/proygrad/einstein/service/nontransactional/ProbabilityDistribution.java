@@ -24,23 +24,25 @@ public class ProbabilityDistribution {
     //distributionMap
     private Map<String, AbstractRealDistribution> distributionMap = new HashMap<String, AbstractRealDistribution>();
 
-    public ParameterTO simulate(String key, ParameterTO variable) {
+    public ParameterTO simulatePositive(String key, ParameterTO variable) {
         if (ValueType.VARIABLE.equals(variable.getType())) {
             //variable.setValue(distributionMap.get(key).sample());
             ParameterTO p = new ParameterTO();
             p.setUnit(variable.getUnit());
             p.setType(variable.getType());
-            p.setValue(distributionMap.get(key).sample());
+            double sample = distributionMap.get(key).sample();
+            //Si la simulacion de la variable da negativa se setea cero
+            p.setValue(sample >= 0 ? sample : 0);
 
             return p;
         }
 
-        return  variable;
+        return variable;
     }
 
     public void loadDistributionMap(String key, ParameterTO variable, RandomGenerator randomGenerator) {
 
-        if(ValueType.VARIABLE.equals(variable.getType())) {
+        if (ValueType.VARIABLE.equals(variable.getType())) {
             List<CommonItemTO> parameters = variable.getDistribution().getParameters();
 
             switch (variable.getDistribution().getType()) {

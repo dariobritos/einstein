@@ -1,6 +1,7 @@
 package org.proygrad.einstein.service.transactional;
 
 
+import org.apache.log4j.Logger;
 import org.proygrad.einstein.api.ScenarioTO;
 import org.proygrad.einstein.persistence.dao.PendingTaskDAO;
 import org.proygrad.einstein.persistence.entities.PendingTaskEntity;
@@ -15,11 +16,14 @@ import java.util.UUID;
 @Transactional
 public class CalculationServiceTX {
 
+    private static final Logger LOGGER = Logger.getLogger(CalculationServiceTX.class);
+
+
     @Autowired
     private PendingTaskDAO pendingTaskDAO;
 
     public String addCalculation(ScenarioTO scenarioTO) {
-
+        LOGGER.info("Saving calculation...");
         PendingTaskEntity newTask = new PendingTaskEntity();
         newTask.setId(UUID.randomUUID().toString());
         newTask.setRequestId(scenarioTO.getId());
@@ -28,7 +32,7 @@ public class CalculationServiceTX {
         newTask.setComplete(false);
 
         pendingTaskDAO.save(newTask);
-
+        LOGGER.info("Calculation saved:" + newTask.getId());
         return newTask.getId();
     }
 }

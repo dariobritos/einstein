@@ -68,8 +68,8 @@ public class CalculateSimpleIronBar {
         for (double i = 0; i < precision; i++) {
 
 
-            Double barLoadSim = loadAndNormalize(this.probabilityDistribution.simulate(BAR_LOAD, barLoadParameterTO), unitSystem);
-            Double barStrengthSim = loadAndNormalize(this.probabilityDistribution.simulate(BAR_STRENGTH, barStrengthParameterTO), unitSystem);
+            Double barLoadSim = loadAndNormalize(this.probabilityDistribution.simulatePositive(BAR_LOAD, barLoadParameterTO), unitSystem);
+            Double barStrengthSim = loadAndNormalize(this.probabilityDistribution.simulatePositive(BAR_STRENGTH, barStrengthParameterTO), unitSystem);
 
             if (barLoadSim > barStrengthSim) {
                 failCount++;
