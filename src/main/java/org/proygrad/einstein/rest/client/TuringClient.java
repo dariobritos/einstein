@@ -12,7 +12,7 @@ public class TuringClient {
     private static final Logger LOGGER = Logger.getLogger(TuringClient.class);
 
 
-    private static String DIR_TURING = "http://localhost:9040";
+    private static String DIR_TURING = "http://turing";
 
     private static String SCENARIO = DIR_TURING + "/scenario/";
     private static String PATCH_OUTPUT =  "/output";

@@ -10,7 +10,7 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class})
-//@EnableDiscoveryClient
+@EnableDiscoveryClient
 @ComponentScan("org.proygrad.einstein")
 public class App {
 
