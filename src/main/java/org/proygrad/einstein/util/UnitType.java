@@ -6,6 +6,7 @@ public class UnitType {
     //** DISTANCE (millimeter, centimeter)
     public static final String MILLIMETER = "MM";
     public static final String CENTIMETER = "CM";
+    public static final String METER = "M";
     //** PRESURE (megapascal, kilopascal)
     public static final String MEGAPASCAL = "MPA";
     public static final String KILOPASCAL = "KPA";

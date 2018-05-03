@@ -210,8 +210,12 @@ public class CalculateSeSurfaceCrackStraightPipe {
         switch (unitSystem) {
             case UnitSystem.INTERNATIONAL:
                 switch (variable.getUnit()) {
+                    case UnitType.METER:
+                        variable.setValue(variable.getValue() * 1000);
+                        variable.setUnit(UnitType.MILLIMETER);
+                        break;
                     case UnitType.CENTIMETER:
-                        variable.setValue(variable.getValue() / 10);
+                        variable.setValue(variable.getValue() * 10);
                         variable.setUnit(UnitType.MILLIMETER);
                         break;
                     case UnitType.KILOPASCAL:
