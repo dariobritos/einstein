@@ -22,7 +22,7 @@ public class CalculateCircularSectionBarSubjectToTraction {
 
 
     private static final String BAR_LOAD = "BAR_LOAD";
-    private static final String BAR_STRENGTH = "BAR_STRENGTH";
+    private static final String YIELD_STRESS = "YIELD_STRESS";
     private static final String BAR_DIAMETER = "BAR_DIAMETER";
 
     private static final String SEED = "SEED";
@@ -44,7 +44,7 @@ public class CalculateCircularSectionBarSubjectToTraction {
         String unitSystem = scenario.getUnitSystem();
 
         ParameterTO barLoadParameterTO = ParameterUtil.getParameter(scenario.getParameters(), BAR_LOAD);
-        ParameterTO barStrengthParameterTO = ParameterUtil.getParameter(scenario.getParameters(), BAR_STRENGTH);
+        ParameterTO barStrengthParameterTO = ParameterUtil.getParameter(scenario.getParameters(), YIELD_STRESS);
         ParameterTO barDiameterParameterTO = ParameterUtil.getParameter(scenario.getParameters(), BAR_DIAMETER);
 
         Double barDiameter = loadAndNormalize(barDiameterParameterTO, unitSystem);
@@ -56,7 +56,7 @@ public class CalculateCircularSectionBarSubjectToTraction {
         randomGenerator.setSeed(seed.longValue());
 
         this.probabilityDistribution.loadDistributionMap(BAR_LOAD, barLoadParameterTO, randomGenerator);
-        this.probabilityDistribution.loadDistributionMap(BAR_STRENGTH, barStrengthParameterTO, randomGenerator);
+        this.probabilityDistribution.loadDistributionMap(YIELD_STRESS, barStrengthParameterTO, randomGenerator);
 
 
         Double precision = CommonItemUtil.getValue(scenario.getConfiguration(), PRECISION);
@@ -69,7 +69,7 @@ public class CalculateCircularSectionBarSubjectToTraction {
 
 
             Double barLoadSim = loadAndNormalize(this.probabilityDistribution.simulatePositive(BAR_LOAD, barLoadParameterTO), unitSystem);
-            Double barStrengthSim = loadAndNormalize(this.probabilityDistribution.simulatePositive(BAR_STRENGTH, barStrengthParameterTO), unitSystem);
+            Double barStrengthSim = loadAndNormalize(this.probabilityDistribution.simulatePositive(YIELD_STRESS, barStrengthParameterTO), unitSystem);
 
             Double barLoadWork = barLoadSim/area;
 
