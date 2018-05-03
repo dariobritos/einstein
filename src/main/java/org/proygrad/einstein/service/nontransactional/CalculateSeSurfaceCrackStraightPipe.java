@@ -43,19 +43,6 @@ public class CalculateSeSurfaceCrackStraightPipe {
 
     public ScenarioTO calculate(ScenarioTO scenario) {
 
-        //TODO: Asignar ejecutores, ver hilos, memoria compartida etc.
-        //TODO: Mandar a ejecutar.
-        //TODO: Esperar fin.
-        //TODO: Acumular resultados parciales.
-        //TODO: Armar retorno.
-
-        scenario = calculateSimple(scenario);
-
-        return scenario;
-    }
-
-    public ScenarioTO calculateSimple(ScenarioTO scenario) {
-
         String unitSystem = scenario.getUnitSystem();
         //Obtener variables de entrada
 
@@ -105,13 +92,19 @@ public class CalculateSeSurfaceCrackStraightPipe {
 
             if (validateParameters(a, c, t, KIC, Ri, SigS, P)) {
 
-                Double PRi = P * Ri;
+                Double Pm = (P * Ri) / t;
+
+                Double Ro = Ri + t;
+                Double Ro2 = Math.pow(Ro, 2);
+                Double Ri2 = Math.pow(Ri, 2);
+
+                Double Pb = ((P * Ro2) / (Ro2 - Ri2)) * ((t / Ri) - (1.5 * (Math.pow(t / Ri, 2))) + ((9 / 5) * (Math.pow(t / Ri, 3))));
 
                 //Step 2 - Calculate toughness ratio Kr
-                Double Kr = calculateKr(a, c, t, KIC, PRi);
+                Double Kr = calculateKr(a, c, t, KIC, Pm, Pb);
 
                 //Step 3 - Calculate load ratio Lr
-                Double Lr = calculateLr(a, c, t, Ri, PRi, P, SigS);
+                Double Lr = calculateLr(a, c, t, Ri, Pm, Pb, SigS);
 
                 //Step 4 - Determine the position of (Kr, Lr)
                 safePipe = isSafeZone(Kr, Lr, LrMax);
@@ -150,15 +143,12 @@ public class CalculateSeSurfaceCrackStraightPipe {
 
     }
 
-    private Double calculateKr(Double a, Double c, Double t, Double KIC, Double PRi) {
+    private Double calculateKr(Double a, Double c, Double t, Double KIC, Double Pm, Double Pb ) {
 
         Double adivc = a / c;
         Double adivt = a / t;
         Double powAdivt2 = Math.pow(adivt, 2);
         Double aInMetres = a / 1000;
-
-
-        Double SigM = PRi / t;
 
         Double fm0 = (1 / Math.pow(1 + (1.464 * (Math.pow((adivc), (1.65)))), 0.5));
         Double fm1 = (1.13 - (0.09 * adivc));
@@ -171,29 +161,18 @@ public class CalculateSeSurfaceCrackStraightPipe {
         Double fb2 = (0.55 - (1.05 * (Math.pow(adivc, 0.75))) + (0.47 * (Math.pow(adivc, 1.5)))) * powAdivt2;
         Double fb = (fb0 + fb1 + fb2) * fm;
 
-        // TODO: esto hasta que conseguir el calculo correspondiente
-        Double SigB = 0.0001;
-
-        Double KI = Math.sqrt(Math.PI * aInMetres) * ((SigM * fm) + (SigB * fb));
+        Double KI = Math.sqrt(Math.PI * aInMetres) * ((Pm * fm) + (Pb * fb));
 
         return KI / KIC;
     }
 
-    private Double calculateLr(Double a, Double c, Double t, Double Ri, Double PRi, Double P, Double SigS) {
+    private Double calculateLr(Double a, Double c, Double t, Double Ri, Double Pm, Double Pb, Double SigS) {
 
         Double adivt = a / t;
         Double alpha = adivt / (1 + (t / c));
 
         Double Mt = Math.sqrt(1 + 1.6 * (Math.pow(c, 2) / (Ri * t)));
         Double Ms = (1 - (a / (t * Mt))) / (1 - (adivt));
-
-        Double Pm = PRi / t;
-
-        Double Ro = Ri + t;
-        Double Ro2 = Math.pow(Ro, 2);
-        Double Ri2 = Math.pow(Ri, 2);
-
-        Double Pb = ((P * Ro2) / (Ro2 - Ri2)) * ((t / Ri) - (1.5 * (Math.pow(t / Ri, 2))) + ((9 / 5) * (Math.pow(t / Ri, 3))));
 
         Double SigRef = (1.2 * Ms * Pm) + (2 * Pb) / (3 * Math.pow((1 - alpha), 2));
 
