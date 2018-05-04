@@ -73,7 +73,7 @@ public class CalculateCircularSectionBarSubjectToTraction {
 
             Double barLoadWork = barLoadSim/area;
 
-            if (!(barLoadWork > barStrengthSim)) {
+            if (barLoadWork > barStrengthSim) {
                 failCount++;
             }
         }
