@@ -29,27 +29,29 @@ public class CalculationJob {
     private TuringClient turingClient;
 
     @Scheduled(fixedDelay = 7200, initialDelay = 900)
-    public void run(){
+    public void run() {
 
         LOGGER.info("Getting pending calculations...");
         List<PendingTaskEntity> pendingTaskEntities = pendingTaskServiceTX.getPendingTask();
 
-        for(PendingTaskEntity pendingTask : pendingTaskEntities) {
+        for (PendingTaskEntity pendingTask : pendingTaskEntities) {
 
             pendingTaskServiceTX.setCompleteTask(pendingTask.getId(), true, false);
 
             ScenarioTO scenario = turingClient.getScenario(pendingTask.getRequestId());
 
-            try{
+            try {
                 LOGGER.info("Starting scenario calculation: " + scenario.getId());
                 ScenarioTO result = calculationService.calculationResolve(scenario);
                 LOGGER.info("Scenario calculation finished: " + scenario.getId());
                 turingClient.sendResult(result);
                 // marcar como realizada
                 pendingTaskServiceTX.setCompleteTask(pendingTask.getId(), false, true);
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 // marcar como not running
                 pendingTaskServiceTX.setCompleteTask(pendingTask.getId(), false, false);
+
+                throw ex;
 
             }
 

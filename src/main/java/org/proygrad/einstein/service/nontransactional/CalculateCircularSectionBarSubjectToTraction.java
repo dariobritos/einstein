@@ -18,11 +18,12 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class CalculateSimpleIronBar {
+public class CalculateCircularSectionBarSubjectToTraction {
 
 
     private static final String BAR_LOAD = "BAR_LOAD";
-    private static final String BAR_STRENGTH = "BAR_STRENGTH";
+    private static final String YIELD_STRESS = "YIELD_STRESS";
+    private static final String BAR_DIAMETER = "BAR_DIAMETER";
 
     private static final String SEED = "SEED";
     private static final String PRECISION = "PRECISION";
@@ -40,17 +41,13 @@ public class CalculateSimpleIronBar {
 
     public ScenarioTO calculate(ScenarioTO scenario) {
 
-        scenario = calculateSimple(scenario);
-
-        return scenario;
-    }
-
-    public ScenarioTO calculateSimple(ScenarioTO scenario) {
-
         String unitSystem = scenario.getUnitSystem();
 
         ParameterTO barLoadParameterTO = ParameterUtil.getParameter(scenario.getParameters(), BAR_LOAD);
-        ParameterTO barStrengthParameterTO = ParameterUtil.getParameter(scenario.getParameters(), BAR_STRENGTH);
+        ParameterTO barStrengthParameterTO = ParameterUtil.getParameter(scenario.getParameters(), YIELD_STRESS);
+        ParameterTO barDiameterParameterTO = ParameterUtil.getParameter(scenario.getParameters(), BAR_DIAMETER);
+
+        Double barDiameter = loadAndNormalize(barDiameterParameterTO, unitSystem);
 
         Double seed = CommonItemUtil.getValue(scenario.getConfiguration(), SEED);
 
@@ -59,19 +56,24 @@ public class CalculateSimpleIronBar {
         randomGenerator.setSeed(seed.longValue());
 
         this.probabilityDistribution.loadDistributionMap(BAR_LOAD, barLoadParameterTO, randomGenerator);
-        this.probabilityDistribution.loadDistributionMap(BAR_STRENGTH, barStrengthParameterTO, randomGenerator);
+        this.probabilityDistribution.loadDistributionMap(YIELD_STRESS, barStrengthParameterTO, randomGenerator);
 
 
         Double precision = CommonItemUtil.getValue(scenario.getConfiguration(), PRECISION);
         Integer failCount = 0;
 
+        Double radio = barDiameter/2;
+        Double area = Math.PI * radio * radio  ;
+
         for (double i = 0; i < precision; i++) {
 
 
             Double barLoadSim = loadAndNormalize(this.probabilityDistribution.simulatePositive(BAR_LOAD, barLoadParameterTO), unitSystem);
-            Double barStrengthSim = loadAndNormalize(this.probabilityDistribution.simulatePositive(BAR_STRENGTH, barStrengthParameterTO), unitSystem);
+            Double barStrengthSim = loadAndNormalize(this.probabilityDistribution.simulatePositive(YIELD_STRESS, barStrengthParameterTO), unitSystem);
 
-            if (barLoadSim > barStrengthSim) {
+            Double barLoadWork = barLoadSim/area;
+
+            if (barLoadWork > barStrengthSim) {
                 failCount++;
             }
         }
@@ -124,8 +126,12 @@ public class CalculateSimpleIronBar {
         switch (unitSystem) {
             case UnitSystem.INTERNATIONAL:
                 switch (variable.getUnit()) {
+                    case UnitType.METER:
+                        variable.setValue(variable.getValue() * 1000);
+                        variable.setUnit(UnitType.MILLIMETER);
+                        break;
                     case UnitType.CENTIMETER:
-                        variable.setValue(variable.getValue() / 10);
+                        variable.setValue(variable.getValue() * 10);
                         variable.setUnit(UnitType.MILLIMETER);
                         break;
                     case UnitType.KILOPASCAL:
